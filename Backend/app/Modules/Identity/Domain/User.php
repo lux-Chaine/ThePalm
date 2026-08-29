@@ -2,41 +2,69 @@
 
 namespace App\Modules\Identity\Domain;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User as EloquentUser;
 
-class User extends Model
+class User extends EloquentUser
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    public function isAdmin(): bool
+    // Domain-specific methods for Identity Module
+    public function canManageUsers(): bool
     {
-        return $this->role === 'admin';
+        return $this->isAdmin();
     }
 
-    public function isManager(): bool
+    public function canManageReservations(): bool
     {
-        return $this->role === 'manager';
+        return $this->isAdmin() || $this->isReceptionist();
     }
 
-    public function isUser(): bool
+    public function canManageAccounting(): bool
     {
-        return $this->role === 'user';
+        return $this->isAdmin() || $this->isAccountant();
+    }
+
+    public function getPermissions(): array
+    {
+        $permissions = [
+            'admin' => [
+                'users.create',
+                'users.read',
+                'users.update',
+                'users.delete',
+                'reservations.create',
+                'reservations.read',
+                'reservations.update',
+                'reservations.delete',
+                'accounting.create',
+                'accounting.read',
+                'accounting.update',
+                'accounting.delete',
+            ],
+            'receptionist' => [
+                'reservations.create',
+                'reservations.read',
+                'reservations.update',
+                'rooms.read',
+                'guests.create',
+                'guests.read',
+            ],
+            'accountant' => [
+                'accounting.create',
+                'accounting.read',
+                'accounting.update',
+                'invoices.create',
+                'invoices.read',
+                'invoices.update',
+                'expenses.create',
+                'expenses.read',
+                'expenses.update',
+            ],
+        ];
+
+        return $permissions[$this->role] ?? [];
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return in_array($permission, $this->getPermissions());
     }
 }
