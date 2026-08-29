@@ -1,0 +1,22 @@
+{
+  "name": "palm-frontend",
+  "version": "1.0.0",
+  "description": "Palm Frontend - Svelte MVC Architecture",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "svelte": "^4.2.0",
+    "svelte-check": "^3.6.0",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "svelte-routing": "^2.0.0"
+  }
+}

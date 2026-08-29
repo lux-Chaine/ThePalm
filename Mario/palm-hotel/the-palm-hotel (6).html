@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Palm Hotel | Luxury in Kafr El Sheikh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-deep:   #16332A;
+    --green-mid:    #234A3B;
+    --gold:         #B8934A;
+    --gold-light:   #D8BD86;
+    --sand:         #F1EAD9;
+    --sand-warm:    #EAE1CB;
+    --paper:        #F8F4EA;
+    --ink:          #201E19;
+    --ink-soft:     #4A493F;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--paper); color:var(--ink); font-family:'Work Sans', sans-serif; overflow-x:hidden; }
+  h1,h2,h3,.display{ font-family:'Fraunces', serif; font-weight:500; letter-spacing:-0.01em; line-height:1.08; }
+  .eyebrow{ font-family:'Work Sans', sans-serif; font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; font-weight:600; }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+
+  .frond-shadow{ position:absolute; inset:0; pointer-events:none; opacity:0.22; mix-blend-mode:soft-light; filter:blur(1.5px); animation: driftShadow 34s ease-in-out infinite; z-index:2; }
+  @keyframes driftShadow{ 0%{transform:translate(-2%,0%) rotate(-1deg) scale(1);} 50%{transform:translate(2.5%,1.5%) rotate(1.2deg) scale(1.04);} 100%{transform:translate(-2%,0%) rotate(-1deg) scale(1);} }
+  @media (prefers-reduced-motion: reduce){ .frond-shadow{ animation:none; } }
+
+  header{ position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:26px max(6vw, calc((100vw - 1260px)/2)); transition: background-color .4s ease, padding .4s ease, box-shadow .4s ease; }
+  header.scrolled{ background:rgba(22,51,42,0.94); backdrop-filter: blur(6px); box-shadow:0 1px 0 rgba(184,147,74,0.25); padding-top:16px; padding-bottom:16px; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand img{ width:38px; height:38px; border-radius:50%; box-shadow:0 0 0 1px rgba(255,255,255,0.15); }
+  .brand span{ font-family:'Fraunces', serif; font-size:1rem; letter-spacing:0.02em; color:var(--sand); }
+  nav ul{ list-style:none; display:flex; gap:32px; }
+  nav a{ color:var(--sand); font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; font-weight:500; position:relative; padding-bottom:4px; }
+  nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--gold); transition:width .3s ease; }
+  nav a:hover::after{ width:100%; }
+  .nav-cta{ border:1px solid var(--gold-light); padding:8px 18px; border-radius:2px; font-size:0.74rem !important; }
+
+  .hero{ position:relative; min-height:100vh; display:flex; align-items:flex-end; overflow:hidden; padding:0 max(6vw, calc((100vw - 1260px)/2)) 100px; }
+  .hero-bg{ position:absolute; inset:0; z-index:0; }
+  .hero-bg img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; animation: heroFade 18s infinite; }
+  .hero-bg img:nth-child(1){ animation-delay:0s; }
+  .hero-bg img:nth-child(2){ animation-delay:6s; }
+  .hero-bg img:nth-child(3){ animation-delay:12s; }
+  @keyframes heroFade{ 0%{opacity:0;} 5%{opacity:1;} 33%{opacity:1;} 38%{opacity:0;} 100%{opacity:0;} }
+  .hero-bg::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(22,51,42,0.5) 0%, rgba(22,51,42,0.32) 40%, rgba(18,28,23,0.94) 100%); z-index:1; }
+  @media (prefers-reduced-motion: reduce){ .hero-bg img{ animation:none; opacity:1; } .hero-bg img:not(:first-child){ display:none; } }
+  .hero-inner{ position:relative; z-index:3; max-width:760px; }
+  .hero .eyebrow{ color:var(--gold-light); margin-bottom:20px; display:block; }
+  .hero h1{ color:var(--sand); font-size:clamp(2.4rem, 5.6vw, 4.4rem); margin-bottom:22px; }
+  .hero h1 em{ font-style:italic; color:var(--gold-light); }
+  .hero p{ color:rgba(241,234,217,0.8); font-size:1.02rem; line-height:1.7; max-width:520px; margin-bottom:34px; }
+  .btn-row{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  .btn-primary{ background:var(--gold); color:var(--green-deep); padding:15px 30px; font-weight:600; font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase; border-radius:2px; transition: transform .25s ease, background .25s ease; display:inline-block; }
+  .btn-primary:hover{ transform:translateY(-2px); background:var(--gold-light); }
+  .btn-ghost{ color:var(--sand); font-size:0.82rem; letter-spacing:0.04em; text-transform:uppercase; border-bottom:1px solid rgba(241,234,217,0.4); padding-bottom:4px; }
+
+  .stat-strip{ position:relative; z-index:3; display:flex; gap:0; margin-top:56px; border-top:1px solid rgba(184,147,74,0.3); padding-top:24px; flex-wrap:wrap; }
+  .stat-strip div{ padding-right:44px; }
+  .stat-strip strong{ display:block; color:var(--gold-light); font-family:'Fraunces', serif; font-size:1.3rem; }
+  .stat-strip span{ color:rgba(241,234,217,0.6); font-size:0.75rem; letter-spacing:0.05em; text-transform:uppercase; }
+
+  .overview{ background:var(--paper); padding:96px max(6vw, calc((100vw - 1260px)/2)) 70px; text-align:center; }
+  .overview-inner{ max-width:820px; margin:0 auto; }
+  .overview .eyebrow{ color:var(--gold); display:block; margin-bottom:22px; }
+  .overview-lead{ font-family:'Fraunces', serif; font-size:clamp(1.2rem, 2.1vw, 1.55rem); line-height:1.55; color:var(--ink); margin-bottom:52px; }
+  .award-row{ display:flex; justify-content:center; gap:0; flex-wrap:wrap; border-top:1px solid rgba(74,73,63,0.15); padding-top:32px; }
+  .award-item{ padding:0 40px; border-right:1px solid rgba(74,73,63,0.15); }
+  .award-item:last-child{ border-right:none; }
+  .award-item strong{ display:block; font-family:'Fraunces', serif; font-size:1.5rem; color:var(--green-mid); margin-bottom:6px; }
+  .award-item span{ font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); }
+  @media (max-width:700px){ .award-item{ padding:10px 20px; border-right:none; border-bottom:1px solid rgba(74,73,63,0.15); flex:1 1 45%; } }
+
+  section{ position:relative; padding:130px max(6vw, calc((100vw - 1260px)/2)); }
+  .section-head{ max-width:640px; margin-bottom:64px; }
+  .section-head::before{ content:''; display:block; width:54px; height:2px; background:var(--gold); margin-bottom:22px; }
+  .section-head .eyebrow{ color:var(--gold); margin-bottom:16px; display:block; }
+  .section-head h2{ font-size:clamp(2rem, 3.4vw, 2.9rem); }
+  .section-head.on-dark::before{ background:var(--gold-light); }
+  .section-head.on-dark .eyebrow{ color:var(--gold-light); }
+  .section-head.on-dark h2{ color:var(--sand); }
+
+  /* location / nearby */
+  .location{ background:var(--sand); }
+  .nearby-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-bottom:56px; }
+  .distance-table{ margin-bottom:48px; border-top:1px solid rgba(74,73,63,0.15); }
+  .distance-row{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:20px; padding:16px 4px; border-bottom:1px solid rgba(74,73,63,0.12); font-size:0.9rem; color:var(--ink-soft); }
+  .distance-row span:first-child{ color:var(--ink); font-weight:500; }
+  .distance-row span:last-child{ text-align:right; }
+  .distance-head{ font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-weight:600; border-bottom:1px solid var(--gold); }
+  .nearby-card{ position:relative; border-radius:8px; overflow:hidden; aspect-ratio:4/5; box-shadow:0 20px 40px -18px rgba(22,51,42,0.35); }
+  .nearby-card img{ width:100%; height:100%; object-fit:cover; transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .nearby-card:hover img{ transform:scale(1.06); }
+  .nearby-card::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(22,51,42,0.9) 100%); }
+  .nearby-card .label{ position:absolute; left:20px; right:20px; bottom:18px; z-index:2; color:var(--sand); }
+  .nearby-card .label h3{ font-size:1.1rem; margin-bottom:4px; }
+  .nearby-card .label span{ font-size:0.78rem; color:var(--gold-light); letter-spacing:0.04em; }
+  .facilities-row{ display:flex; flex-wrap:wrap; gap:14px; }
+  .facility-pill{ background:var(--paper); border:1px solid rgba(74,73,63,0.15); padding:12px 22px; border-radius:30px; font-size:0.85rem; color:var(--ink-soft); }
+
+  /* reception */
+  .reception{ background:var(--paper); }
+  .reception-grid{ display:grid; grid-template-columns: 1.1fr 1fr; gap:70px; align-items:center; }
+  .reception-photos{ display:grid; grid-template-columns:1.3fr 1fr; grid-template-rows:1fr 1fr; gap:14px; height:460px; }
+  .reception-photos img{ width:100%; height:100%; object-fit:cover; border-radius:8px; box-shadow:0 20px 40px -20px rgba(22,51,42,0.3); transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .reception-photos a{ overflow:hidden; border-radius:8px; display:block; }
+  .reception-photos a:hover img{ transform:scale(1.06); }
+  .reception-photos a:first-child{ grid-row:1/3; }
+  .info-list{ display:grid; grid-template-columns:1fr 1fr; gap:32px 24px; }
+  .info-list dt{ font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; font-weight:600; }
+  .info-list dd{ font-family:'Fraunces', serif; font-size:1.2rem; }
+
+  /* rooms */
+  .rooms{ background:var(--green-deep); }
+  .room-block{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; margin-bottom:90px; }
+  .room-block:last-child{ margin-bottom:0; }
+  .room-block.reverse .room-photos{ order:2; }
+  .room-photos{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .room-photos img{ width:100%; height:280px; object-fit:cover; border-radius:8px; box-shadow:0 24px 50px -22px rgba(0,0,0,0.5); transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .room-photos img:hover{ transform:scale(1.04); }
+  .room-copy .size{ color:var(--gold-light); font-family:'Fraunces', serif; font-style:italic; font-size:0.95rem; display:block; margin-bottom:10px; }
+  .room-copy h3{ color:var(--sand); font-size:1.9rem; margin-bottom:8px; }
+  .room-copy .config{ color:var(--gold); font-size:0.85rem; letter-spacing:0.03em; margin-bottom:20px; display:block; }
+  .room-copy p{ color:rgba(241,234,217,0.7); line-height:1.75; margin-bottom:22px; }
+  .room-meta{ display:flex; gap:32px; margin-bottom:26px; padding-bottom:26px; border-bottom:1px solid rgba(184,147,74,0.25); flex-wrap:wrap; }
+  .room-meta div span{ display:block; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-light); margin-bottom:5px; }
+  .room-meta div strong{ font-family:'Fraunces', serif; color:var(--sand); font-size:0.98rem; font-weight:400; }
+  .amen-tags{ display:flex; flex-wrap:wrap; gap:10px; }
+  .amen-tags span{ font-size:0.75rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--sand); border:1px solid rgba(184,147,74,0.4); padding:7px 14px; border-radius:2px; }
+  .policy-note{ margin-top:60px; padding-top:36px; border-top:1px solid rgba(184,147,74,0.25); color:rgba(241,234,217,0.55); font-size:0.9rem; font-style:italic; }
+
+  /* dining */
+  .dining{ background:var(--sand); }
+  .dining-gallery{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:56px; }
+  .dining-gallery img{ width:100%; height:210px; object-fit:cover; border-radius:8px; box-shadow:0 18px 36px -18px rgba(22,51,42,0.28); transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .dining-gallery img:hover{ transform:scale(1.05); }
+  .outlet-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  .outlet-card{ background:var(--paper); border-radius:8px; padding:32px 28px; box-shadow:0 20px 40px -26px rgba(22,51,42,0.25); }
+  .outlet-card h3{ font-size:1.3rem; margin-bottom:12px; }
+  .outlet-card p{ color:var(--ink-soft); line-height:1.65; font-size:0.92rem; margin-bottom:24px; min-height:78px; }
+  .outlet-meta{ display:grid; grid-template-columns:1fr 1fr; gap:16px; border-top:1px solid rgba(74,73,63,0.15); padding-top:20px; }
+  .outlet-meta dt{ font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+  .outlet-meta dd{ font-family:'Fraunces', serif; font-size:0.95rem; }
+
+  /* events */
+  .events{ background:var(--green-deep); }
+  .events-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:60px; align-items:center; }
+  .events-gallery{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .events-gallery img{ width:100%; height:180px; object-fit:cover; border-radius:8px; box-shadow:0 20px 40px -20px rgba(0,0,0,0.5); transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .events-gallery img:hover{ transform:scale(1.05); }
+  .events-copy h3{ color:var(--sand); font-size:1.9rem; margin-bottom:18px; }
+  .events-copy p{ color:rgba(241,234,217,0.7); line-height:1.75; margin-bottom:30px; }
+  .capacity-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .capacity-grid div{ border-top:1px solid rgba(184,147,74,0.3); padding-top:14px; }
+  .capacity-grid strong{ display:block; color:var(--gold-light); font-family:'Fraunces', serif; font-size:1.5rem; }
+  .capacity-grid span{ color:rgba(241,234,217,0.55); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .max-cap{ display:flex; gap:40px; margin-top:34px; }
+  .max-cap div span{ display:block; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-light); margin-bottom:6px; }
+  .max-cap div strong{ font-family:'Fraunces', serif; color:var(--sand); font-size:1.3rem; }
+  .venue-table{ margin-top:44px; border-top:1px solid rgba(184,147,74,0.25); }
+  .venue-row{ display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:16px; padding:14px 0; border-bottom:1px solid rgba(184,147,74,0.15); font-size:0.88rem; color:rgba(241,234,217,0.75); }
+  .venue-row span:first-child{ color:var(--sand); font-family:'Fraunces', serif; }
+  .venue-head{ font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-light); border-bottom:1px solid var(--gold); }
+  .venue-head span:first-child{ font-family:'Work Sans', sans-serif; color:var(--gold-light); }
+
+  /* kids */
+  .kids{ background:var(--paper); }
+  .kids-grid{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+  .kids-gallery{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .kids-gallery img{ width:100%; height:160px; object-fit:cover; border-radius:8px; box-shadow:0 16px 32px -18px rgba(22,51,42,0.25); transition:transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .kids-gallery img:hover{ transform:scale(1.05); }
+  .kids-copy h3{ font-size:1.9rem; margin-bottom:14px; }
+  .kids-copy p{ color:var(--ink-soft); line-height:1.75; margin-bottom:14px; }
+  .kids-copy .note{ font-size:0.85rem; color:var(--gold); font-weight:600; letter-spacing:0.03em; text-transform:uppercase; }
+
+  /* amenities */
+  .amenities{ background:var(--sand); }
+  .amenity-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:rgba(74,73,63,0.15); border:1px solid rgba(74,73,63,0.15); }
+  .amenity-card{ background:var(--sand); padding:32px 26px; }
+  .amenity-card h4{ font-family:'Fraunces', serif; font-size:1.05rem; margin-bottom:10px; color:var(--green-mid); }
+  .amenity-card p{ color:var(--ink-soft); font-size:0.86rem; line-height:1.6; }
+
+  /* offers */
+  .offers{ background:var(--green-deep); }
+  .offers .section-head.reveal .eyebrow{ color:var(--gold-light); }
+  .offers .section-head.reveal h2{ color:var(--sand); }
+  .offer-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  .offer-card{ position:relative; background:rgba(241,234,217,0.05); border:1px solid rgba(184,147,74,0.3); border-radius:8px; padding:32px 26px; }
+  .offer-tag{ display:inline-block; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--green-deep); background:var(--gold-light); padding:5px 12px; border-radius:20px; font-weight:600; margin-bottom:18px; }
+  .offer-card h3{ color:var(--sand); font-size:1.25rem; margin-bottom:14px; }
+  .offer-card p{ color:rgba(241,234,217,0.65); font-size:0.9rem; line-height:1.65; margin-bottom:22px; min-height:96px; }
+  .offer-link{ color:var(--gold-light); font-size:0.82rem; letter-spacing:0.03em; text-transform:uppercase; border-bottom:1px solid rgba(184,147,74,0.4); padding-bottom:3px; }
+
+  /* reservation / cta */
+  /* guests */
+  .guests{ background:var(--sand); }
+  .guest-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  .guest-card{ text-align:center; }
+  .guest-card img{ width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:50%; margin-bottom:16px; box-shadow:0 16px 32px -16px rgba(22,51,42,0.3); }
+  .guest-card span{ font-family:'Fraunces', serif; font-style:italic; font-size:1rem; }
+  .guest-card small{ display:block; color:var(--ink-soft); font-size:0.75rem; letter-spacing:0.05em; text-transform:uppercase; margin-top:4px; }
+  .rating-strip{ display:flex; gap:0; margin-bottom:56px; flex-wrap:wrap; }
+  .rating-strip div{ padding-right:44px; margin-right:44px; border-right:1px solid rgba(74,73,63,0.15); }
+  .rating-strip div:last-child{ border-right:none; }
+  .rating-strip strong{ display:block; font-family:'Fraunces', serif; font-size:1.7rem; color:var(--green-mid); }
+  .rating-strip span{ font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); }
+
+  .policies{ background:var(--paper); }
+  .policy-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  .policy-card{ border-top:2px solid var(--gold); padding-top:22px; }
+  .policy-card h4{ font-family:'Fraunces', serif; font-size:1.1rem; margin-bottom:12px; }
+  .policy-card p{ color:var(--ink-soft); font-size:0.9rem; line-height:1.65; }
+
+  .cta-banner{ position:relative; background:var(--green-deep); padding:130px max(6vw, calc((100vw - 1260px)/2)); text-align:center; overflow:hidden; }
+  .cta-banner .eyebrow{ color:var(--gold-light); margin-bottom:22px; }
+  .cta-banner h2{ position:relative; z-index:2; color:var(--sand); font-size:clamp(2rem,4.2vw,3.3rem); max-width:800px; margin:0 auto 36px; }
+  .contact-row{ position:relative; z-index:2; display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-bottom:40px; color:rgba(241,234,217,0.75); font-size:0.95rem; }
+  .contact-row a{ border-bottom:1px solid rgba(184,147,74,0.4); padding-bottom:2px; }
+  .cta-banner .btn-primary{ position:relative; z-index:2; }
+
+  footer{ background:var(--sand-warm); padding:64px max(6vw, calc((100vw - 1260px)/2)) 40px; }
+  .footer-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:40px; margin-bottom:50px; }
+  .footer-brand{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .footer-brand img{ width:34px; height:34px; border-radius:50%; }
+  .footer-brand span{ font-family:'Fraunces', serif; font-size:1.1rem; }
+  footer p.tag{ color:var(--ink-soft); font-size:0.9rem; max-width:280px; line-height:1.6; }
+  .footer-col h4{ font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:18px; font-weight:600; }
+  .footer-col a{ display:block; font-size:0.92rem; color:var(--ink); margin-bottom:12px; }
+  .footer-bottom{ border-top:1px solid rgba(74,73,63,0.2); padding-top:24px; display:flex; justify-content:space-between; font-size:0.78rem; color:var(--ink-soft); flex-wrap:wrap; gap:10px; }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .8s ease, transform .8s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (max-width: 900px){
+    nav ul{ display:none; }
+    .nearby-grid{ grid-template-columns:1fr 1fr; }
+    .distance-row{ grid-template-columns:1.4fr 0.8fr 1fr; font-size:0.8rem; }
+    .reception-grid, .room-block, .room-block.reverse, .events-grid, .kids-grid{ grid-template-columns:1fr; }
+    .room-block.reverse .room-photos{ order:0; }
+    .reception-photos{ height:auto; grid-template-rows:none; grid-template-columns:1fr 1fr; }
+    .reception-photos a:first-child{ grid-row:auto; }
+    .dining-gallery{ grid-template-columns:repeat(2,1fr); }
+    .outlet-grid{ grid-template-columns:1fr; }
+    .capacity-grid{ grid-template-columns:repeat(2,1fr); }
+    .kids-gallery{ grid-template-columns:1fr 1fr; }
+    .guest-grid{ grid-template-columns:1fr 1fr; }
+    .offer-grid{ grid-template-columns:1fr 1fr; }
+    .amenity-grid{ grid-template-columns:1fr 1fr; }
+    .rating-strip div{ padding-right:24px; margin-right:24px; margin-bottom:14px; }
+    .policy-grid{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+    section{ padding:80px 6vw; }
+    .info-list{ grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="brand">
+    <img src="data:image/jpeg;base64,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" alt="The Palm logo">
+    <span>THE PALM</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#rooms">Rooms &amp; Suites</a></li>
+      <li><a href="#dining">Dining</a></li>
+      <li><a href="#meetings">Meetings</a></li>
+      <li><a href="#offers">Offers</a></li>
+      <li><a href="#location">Location</a></li>
+      <li><a href="#reserve" class="nav-cta">Reserve</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero" id="about">
+  <div class="hero-bg">
+    <img src="https://the-palm.vercel.app/images/palm1.jpeg" alt="The Palm Hotel exterior">
+    <img src="https://the-palm.vercel.app/images/palm2.jpeg" alt="The Palm Hotel exterior">
+    <img src="https://the-palm.vercel.app/images/palm3.jpg" alt="The Palm Hotel exterior">
+  </div>
+  <svg class="frond-shadow" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g fill="#000000">
+      <path d="M 900 -50 C 700 40 560 180 480 340 C 620 260 780 210 940 230 C 800 120 900 20 900 -50 Z"/>
+      <path d="M 1050 -60 C 830 30 700 190 640 380 C 790 270 970 220 1150 260 C 980 130 1080 30 1050 -60 Z"/>
+      <path d="M 1230 -80 C 980 10 830 190 760 400 C 930 270 1130 220 1330 270 C 1140 130 1260 10 1230 -80 Z"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <span class="eyebrow reveal in">4-Star Luxury &middot; Kafr El Sheikh</span>
+    <h1 class="reveal in">Defining <em>luxury</em> hospitality<br>in the heart of Kafr El Sheikh.</h1>
+    <p class="reveal in">Meticulously designed rooms and suites where modern comfort meets traditional Egyptian hospitality &mdash; steps from the university, the museum, and the city's landmarks.</p>
+    <div class="btn-row reveal in">
+      <a href="#reserve" class="btn-primary">Reserve Now</a>
+      <a href="#location" class="btn-ghost">View location</a>
+    </div>
+    <div class="stat-strip reveal in">
+      <div><strong>4★</strong><span>Hotel Class</span></div>
+      <div><strong>48</strong><span>Rooms &amp; Suites</span></div>
+      <div><strong>250</strong><span>Banquet Capacity</span></div>
+      <div><strong>9.1</strong><span>Guest Rating</span></div>
+      <div><strong>24/7</strong><span>Front Desk</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="overview">
+  <div class="overview-inner reveal">
+    <span class="eyebrow">The Palm Hotel &middot; Kafr El Sheikh</span>
+    <p class="overview-lead">A refined four-star address in the heart of the Nile Delta, The Palm pairs contemporary comfort with the warmth of Egyptian hospitality. Forty-eight rooms and suites, three dining destinations, and 250 m&sup2; of event space sit minutes from the University, the Museum, and the city's commercial district &mdash; making The Palm the address of choice for business travel, family visits, and celebrations alike.</p>
+    <div class="award-row">
+      <div class="award-item"><strong>2026</strong><span>Guest Choice Award</span></div>
+      <div class="award-item"><strong>9.1 / 10</strong><span>Average Guest Score</span></div>
+      <div class="award-item"><strong>#1</strong><span>Rated in Kafr El Sheikh</span></div>
+      <div class="award-item"><strong>2018</strong><span>Established</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="location" id="location">
+  <div class="section-head reveal">
+    <span class="eyebrow">Perfectly Situated</span>
+    <h2>Everything within easy reach.</h2>
+  </div>
+  <div class="nearby-grid">
+    <div class="nearby-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm4.jpg" alt="Kafr El Sheikh University">
+      <div class="label"><h3>Kafr El Sheikh University</h3><span>0.8 km from hotel</span></div>
+    </div>
+    <div class="nearby-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm6.jpg" alt="St. Demiana Church">
+      <div class="label"><h3>St. Demiana Church</h3><span>1.2 km from hotel</span></div>
+    </div>
+    <div class="nearby-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm5.jpg" alt="Kafr El Sheikh Museum">
+      <div class="label"><h3>Kafr El Sheikh Museum</h3><span>2.1 km from hotel</span></div>
+    </div>
+    <div class="nearby-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm2.jpeg" alt="Central Kafr El Sheikh">
+      <div class="label"><h3>City Centre &amp; Souq</h3><span>1.5 km from hotel</span></div>
+    </div>
+  </div>
+
+  <div class="distance-table reveal">
+    <div class="distance-row distance-head"><span>Getting Around</span><span>Distance</span><span>Approx. Travel Time</span></div>
+    <div class="distance-row"><span>Kafr El Sheikh Train Station</span><span>1.4 km</span><span>5 min by car</span></div>
+    <div class="distance-row"><span>Tanta City</span><span>45 km</span><span>40 min by car</span></div>
+    <div class="distance-row"><span>Alexandria</span><span>95 km</span><span>1 h 15 min by car</span></div>
+    <div class="distance-row"><span>Cairo International Airport (CAI)</span><span>145 km</span><span>2 h by car</span></div>
+    <div class="distance-row"><span>Borg El Arab Airport (HBE)</span><span>110 km</span><span>1 h 30 min by car</span></div>
+  </div>
+
+  <div class="facilities-row reveal">
+    <span class="facility-pill">Non-smoking</span>
+    <span class="facility-pill">Restaurant</span>
+    <span class="facility-pill">Room Service</span>
+    <span class="facility-pill">Free Parking</span>
+    <span class="facility-pill">Free WiFi</span>
+    <span class="facility-pill">Tea / Coffee</span>
+    <span class="facility-pill">Superb Breakfast</span>
+  </div>
+</section>
+
+<section class="reception">
+  <div class="reception-grid">
+    <div class="reception-photos reveal">
+      <a href="#"><img src="https://the-palm.vercel.app/images/palm45.jpeg" alt="Reception and lobby"></a>
+      <a href="#"><img src="https://the-palm.vercel.app/images/palm44.jpg" alt="Lobby view"></a>
+      <a href="#"><img src="https://the-palm.vercel.app/images/palm46.jpeg" alt="Lobby seating"></a>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow" style="color:var(--gold); display:block; margin-bottom:18px;">Reception &amp; Services</span>
+      <h2 style="margin-bottom:34px; font-size:clamp(1.9rem, 3vw, 2.6rem);">A warm welcome,<br>any time you arrive.</h2>
+      <dl class="info-list">
+        <div><dt>Front Desk</dt><dd>Available 24/7</dd></div>
+        <div><dt>Languages</dt><dd>Arabic / English</dd></div>
+        <div><dt>Check-in</dt><dd>From 14:00</dd></div>
+        <div><dt>Check-out</dt><dd>Until 12:00</dd></div>
+        <div><dt>Payment</dt><dd>Visa / Mastercard</dd></div>
+        <div><dt>Address</dt><dd style="font-size:1rem;">2, Kafr Abu Tabl, Kafr El Sheikh</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="rooms" id="rooms">
+  <div class="section-head on-dark reveal">
+    <span class="eyebrow">Exquisite Accommodation</span>
+    <h2>Rooms &amp; suites, designed for comfort.</h2>
+  </div>
+
+  <div class="room-block reveal">
+    <div class="room-photos">
+      <img src="https://the-palm.vercel.app/images/palm7.jpeg" alt="Standard King Room">
+      <img src="https://the-palm.vercel.app/images/palm8.jpeg" alt="Standard Twin Room">
+    </div>
+    <div class="room-copy">
+      <span class="size">25 m&sup2;</span>
+      <h3>Standard Room</h3>
+      <span class="config">King Bed (4 Rooms) &nbsp;&middot;&nbsp; Twin Bed (28 Rooms)</span>
+      <p>Sized for corporate travelers and short city breaks alike. Every Standard Room features premium Egyptian cotton linens and a dedicated workspace.</p>
+      <div class="room-meta">
+        <div><span>Occupancy</span><strong>2 Adults</strong></div>
+        <div><span>View</span><strong>City / Courtyard</strong></div>
+        <div><span>Floor</span><strong>1st &ndash; 4th</strong></div>
+      </div>
+      <div class="amen-tags">
+        <span>A/C</span><span>Shower</span><span>Safe Box</span><span>WiFi</span><span>Mini Bar</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="room-block reverse reveal">
+    <div class="room-photos">
+      <img src="https://the-palm.vercel.app/images/palm7.jpeg" alt="Superior Room">
+      <img src="https://the-palm.vercel.app/images/palm8.jpeg" alt="Superior Room seating">
+    </div>
+    <div class="room-copy">
+      <span class="size">32 m&sup2;</span>
+      <h3>Superior Room</h3>
+      <span class="config">King or Twin Bed (10 Rooms)</span>
+      <p>A step up in space and outlook, with a seating nook by the window and upgraded bath amenities &mdash; well suited to longer stays.</p>
+      <div class="room-meta">
+        <div><span>Occupancy</span><strong>2 Adults, 1 Child</strong></div>
+        <div><span>View</span><strong>Garden / Pool</strong></div>
+        <div><span>Floor</span><strong>2nd &ndash; 5th</strong></div>
+      </div>
+      <div class="amen-tags">
+        <span>A/C</span><span>Bathtub</span><span>Safe Box</span><span>WiFi</span><span>Mini Bar</span><span>Seating Area</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="room-block reveal">
+    <div class="room-photos">
+      <img src="https://the-palm.vercel.app/images/palm9.jpeg" alt="Junior Suite bedroom">
+      <img src="https://the-palm.vercel.app/images/palm10.jpeg" alt="Junior Suite lounge">
+    </div>
+    <div class="room-copy">
+      <span class="size">45 m&sup2;</span>
+      <h3>Junior Suite</h3>
+      <span class="config">Premium Suite Collection (4 Suites)</span>
+      <p>An expansive living area alongside a spacious master bedroom &mdash; built for guests who want extra room to settle in and unwind.</p>
+      <div class="room-meta">
+        <div><span>Occupancy</span><strong>3 Adults</strong></div>
+        <div><span>View</span><strong>Garden</strong></div>
+        <div><span>Floor</span><strong>3rd &ndash; 5th</strong></div>
+      </div>
+      <div class="amen-tags">
+        <span>A/C</span><span>Shower</span><span>Safe Box</span><span>WiFi</span><span>Mini Bar</span><span>Living Area</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="room-block reverse reveal">
+    <div class="room-photos">
+      <img src="https://the-palm.vercel.app/images/palm37.jpeg" alt="Executive Suite living room">
+      <img src="https://the-palm.vercel.app/images/palm36.jpg" alt="Executive Suite">
+    </div>
+    <div class="room-copy">
+      <span class="size">60 m&sup2;</span>
+      <h3>Executive Suite</h3>
+      <span class="config">Top-Floor Collection (2 Suites)</span>
+      <p>The Palm's most spacious address &mdash; a separate lounge, dining nook, and master bedroom, finished with upgraded furnishings for guests staying longer or hosting privately.</p>
+      <div class="room-meta">
+        <div><span>Occupancy</span><strong>4 Adults</strong></div>
+        <div><span>View</span><strong>City Panorama</strong></div>
+        <div><span>Floor</span><strong>Top Floor</strong></div>
+      </div>
+      <div class="amen-tags">
+        <span>A/C</span><span>Bathtub</span><span>Safe Box</span><span>WiFi</span><span>Mini Bar</span><span>Dining Nook</span><span>Lounge</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="policy-note reveal">Property policy: for the comfort of all guests, pets are not allowed within the hotel premises. Extra bed available on request, subject to room capacity and surcharge.</p>
+</section>
+
+<section class="dining" id="dining">
+  <div class="section-head reveal">
+    <span class="eyebrow">Foods &amp; Beverages</span>
+    <h2>Dining, from breakfast to sunset.</h2>
+  </div>
+  <div class="dining-gallery reveal">
+    <img src="https://the-palm.vercel.app/images/palm23.jpeg" alt="Restaurant view">
+    <img src="https://the-palm.vercel.app/images/palm20.jpg" alt="Restaurant view">
+    <img src="https://the-palm.vercel.app/images/palm22.jpg" alt="Restaurant view">
+    <img src="https://the-palm.vercel.app/images/palm24.jpeg" alt="Restaurant view">
+  </div>
+
+  <div class="outlet-grid">
+    <div class="outlet-card reveal">
+      <h3>Main Restaurant</h3>
+      <p>International buffet breakfast alongside a-la-carte dining, pairing local flavors with world classics, right off the lobby.</p>
+      <dl class="outlet-meta">
+        <div><dt>Cuisine</dt><dd>International &amp; Egyptian</dd></div>
+        <div><dt>Hours</dt><dd>07:00 &ndash; 23:00</dd></div>
+        <div><dt>Breakfast</dt><dd>07:00 &ndash; 11:00</dd></div>
+        <div><dt>Location</dt><dd>Ground Floor</dd></div>
+      </dl>
+    </div>
+    <div class="outlet-card reveal">
+      <h3>White Garden</h3>
+      <p>An open-air courtyard café for shaded lunches, afternoon coffee, and shisha evenings under string lights.</p>
+      <dl class="outlet-meta">
+        <div><dt>Cuisine</dt><dd>Café &amp; Light Bites</dd></div>
+        <div><dt>Hours</dt><dd>12:00 &ndash; 00:00</dd></div>
+        <div><dt>Seating</dt><dd>Outdoor Courtyard</dd></div>
+        <div><dt>Location</dt><dd>Ground Floor Garden</dd></div>
+      </dl>
+    </div>
+    <div class="outlet-card reveal">
+      <h3>Blue Sky Roof</h3>
+      <p>Rooftop dining and shisha lounge with panoramic views over Kafr El Sheikh, best enjoyed at sunset.</p>
+      <dl class="outlet-meta">
+        <div><dt>Cuisine</dt><dd>Grill &amp; Shisha Lounge</dd></div>
+        <div><dt>Hours</dt><dd>16:00 &ndash; 01:00</dd></div>
+        <div><dt>Seating</dt><dd>Open-Air Rooftop</dd></div>
+        <div><dt>Location</dt><dd>Top Floor</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="events" id="meetings">
+  <div class="events-grid">
+    <div class="events-gallery reveal">
+      <img src="https://the-palm.vercel.app/images/palm36.jpg" alt="Banquet room">
+      <img src="https://the-palm.vercel.app/images/palm37.jpeg" alt="Banquet room">
+      <img src="https://the-palm.vercel.app/images/palm11.jpeg" alt="Conference room">
+      <img src="https://the-palm.vercel.app/images/palm12.jpeg" alt="Conference room">
+    </div>
+    <div class="events-copy reveal">
+      <span class="eyebrow" style="color:var(--gold-light); display:block; margin-bottom:18px;">Events &amp; Conferences</span>
+      <h3>An elegant banquet room for every occasion.</h3>
+      <p>From weddings to grand galas and corporate conferences, our banquet and meeting spaces flex to fit &mdash; with attentive service throughout.</p>
+      <div class="capacity-grid">
+        <div><strong>120</strong><span>Cocktail</span></div>
+        <div><strong>100</strong><span>Auditorium</span></div>
+        <div><strong>80</strong><span>Classroom</span></div>
+        <div><strong>60</strong><span>U-Shape</span></div>
+        <div><strong>110</strong><span>Theatre</span></div>
+      </div>
+      <div class="max-cap">
+        <div><span>Max Capacity</span><strong>250 Guests</strong></div>
+        <div><span>Availability</span><strong>24/7 Booking</strong></div>
+      </div>
+      <div class="venue-table">
+        <div class="venue-row venue-head"><span>Venue</span><span>Area</span><span>Max Capacity</span></div>
+        <div class="venue-row"><span>Grand Ballroom</span><span>180 m&sup2;</span><span>250 guests</span></div>
+        <div class="venue-row"><span>Palm Meeting Room</span><span>60 m&sup2;</span><span>60 guests</span></div>
+        <div class="venue-row"><span>Boardroom</span><span>35 m&sup2;</span><span>20 guests</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kids">
+  <div class="kids-grid">
+    <div class="kids-gallery reveal">
+      <img src="https://the-palm.vercel.app/images/palm43.jpg" alt="Kids zone">
+      <img src="https://the-palm.vercel.app/images/palm42.jpg" alt="Kids zone">
+      <img src="https://the-palm.vercel.app/images/palm41.jpg" alt="Kids zone">
+    </div>
+    <div class="kids-copy reveal">
+      <span class="eyebrow" style="color:var(--gold); display:block; margin-bottom:18px;">Family &amp; Leisure</span>
+      <h3>The Palm Kids Zone</h3>
+      <p>A safe, creative space for our younger guests, with professional supervision on hand so the whole family can relax.</p>
+      <span class="note">Service chargeable</span>
+    </div>
+  </div>
+</section>
+
+<section class="amenities">
+  <div class="section-head reveal">
+    <span class="eyebrow">Facilities &amp; Services</span>
+    <h2>Everything a stay calls for.</h2>
+  </div>
+  <div class="amenity-grid">
+    <div class="amenity-card reveal"><h4>Front Desk</h4><p>Staffed around the clock in Arabic and English, with luggage storage and wake-up calls on request.</p></div>
+    <div class="amenity-card reveal"><h4>Free WiFi</h4><p>High-speed wireless internet throughout all rooms, public areas, and event spaces.</p></div>
+    <div class="amenity-card reveal"><h4>Free Parking</h4><p>Private on-site parking for guests and event attendees, available at no extra charge.</p></div>
+    <div class="amenity-card reveal"><h4>Airport Transfer</h4><p>Shuttle service to Cairo and Borg El Arab airports arranged through the front desk, surcharge applies.</p></div>
+    <div class="amenity-card reveal"><h4>Laundry &amp; Dry Cleaning</h4><p>Same-day laundry and pressing service available Sunday through Thursday.</p></div>
+    <div class="amenity-card reveal"><h4>Currency Exchange</h4><p>On-site currency exchange and ATM access in the main lobby.</p></div>
+    <div class="amenity-card reveal"><h4>Room Service</h4><p>In-room dining available during Main Restaurant hours, 07:00 to 23:00.</p></div>
+    <div class="amenity-card reveal"><h4>Business Centre</h4><p>Printing, photocopying, and fax services, plus meeting-ready workstations near the lobby.</p></div>
+  </div>
+</section>
+
+<section class="offers" id="offers">
+  <div class="section-head reveal">
+    <span class="eyebrow">Offers &amp; Packages</span>
+    <h2>Tailored ways to stay with us.</h2>
+  </div>
+  <div class="offer-grid">
+    <div class="offer-card reveal">
+      <span class="offer-tag">Popular</span>
+      <h3>Bed &amp; Breakfast</h3>
+      <p>Room rate inclusive of our international buffet breakfast at the Main Restaurant, served daily from 07:00.</p>
+      <a href="mailto:reservation@chain-luxe.com" class="offer-link">Enquire &rarr;</a>
+    </div>
+    <div class="offer-card reveal">
+      <span class="offer-tag">Save More</span>
+      <h3>Stay Longer</h3>
+      <p>Book three consecutive nights or more and receive a complimentary late check-out until 16:00, subject to availability.</p>
+      <a href="mailto:reservation@chain-luxe.com" class="offer-link">Enquire &rarr;</a>
+    </div>
+    <div class="offer-card reveal">
+      <span class="offer-tag">For Business</span>
+      <h3>Corporate Rate</h3>
+      <p>Preferential rates for corporate accounts and long-stay business travelers, with flexible billing on request.</p>
+      <a href="mailto:reservation@chain-luxe.com" class="offer-link">Enquire &rarr;</a>
+    </div>
+    <div class="offer-card reveal">
+      <span class="offer-tag">Celebrations</span>
+      <h3>Events Package</h3>
+      <p>Bundle the Grand Ballroom with catering from our dining team for weddings, conferences, and family celebrations.</p>
+      <a href="mailto:reservation@chain-luxe.com" class="offer-link">Enquire &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section class="guests">
+  <div class="section-head reveal">
+    <span class="eyebrow">Guest Experiences</span>
+    <h2>Stories from those who've stayed.</h2>
+  </div>
+  <div class="rating-strip reveal">
+    <div><strong>9.1</strong><span>Overall</span></div>
+    <div><strong>9.3</strong><span>Staff</span></div>
+    <div><strong>8.9</strong><span>Cleanliness</span></div>
+    <div><strong>9.0</strong><span>Location</span></div>
+    <div><strong>8.8</strong><span>Value</span></div>
+  </div>
+  <div class="guest-grid">
+    <div class="guest-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm14.jpg" alt="Mohamed Almogtaba">
+      <span>Mohamed Almogtaba</span><small>Guest</small>
+    </div>
+    <div class="guest-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm17.jpg" alt="Abdullah">
+      <span>Abdullah</span><small>Guest</small>
+    </div>
+    <div class="guest-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm15.jpg" alt="Ahmed">
+      <span>Ahmed</span><small>Guest</small>
+    </div>
+    <div class="guest-card reveal">
+      <img src="https://the-palm.vercel.app/images/palm16.jpg" alt="Hussain">
+      <span>Hussain</span><small>Guest</small>
+    </div>
+  </div>
+</section>
+
+<section class="policies">
+  <div class="section-head reveal">
+    <span class="eyebrow">Good to Know</span>
+    <h2>Policies at a glance.</h2>
+  </div>
+  <div class="policy-grid">
+    <div class="policy-card reveal"><h4>Check-in / Check-out</h4><p>Check-in from 14:00, check-out until 12:00. Early check-in and late check-out are offered subject to availability.</p></div>
+    <div class="policy-card reveal"><h4>Cancellation</h4><p>Free cancellation up to 48 hours before arrival for standard-rate bookings; non-refundable rates are noted at booking.</p></div>
+    <div class="policy-card reveal"><h4>Children &amp; Extra Beds</h4><p>Children of all ages are welcome. Extra beds and cots are available on request, subject to room capacity and a surcharge.</p></div>
+    <div class="policy-card reveal"><h4>Payment &amp; ID</h4><p>Visa and Mastercard accepted alongside cash. A valid national ID or passport is required for check-in.</p></div>
+    <div class="policy-card reveal"><h4>Pets</h4><p>For the comfort of all guests, pets are not permitted within the hotel premises.</p></div>
+    <div class="policy-card reveal"><h4>Smoking</h4><p>The Palm is a non-smoking property; designated outdoor smoking areas are available.</p></div>
+  </div>
+</section>
+
+<section class="cta-banner" id="reserve">
+  <span class="eyebrow reveal">Make Your Reservation</span>
+  <h2 class="reveal">We're happy if you contact us.</h2>
+  <div class="contact-row reveal">
+    <a href="mailto:reservation@chain-luxe.com">reservation@chain-luxe.com</a>
+    <a href="tel:+201103145834">+20 110 314 5834</a>
+    <a href="https://wa.me/201103145834">WhatsApp</a>
+  </div>
+  <a href="mailto:reservation@chain-luxe.com" class="btn-primary reveal">Reserve Now</a>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="data:image/jpeg;base64,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" alt="The Palm logo">
+        <span>THE PALM</span>
+      </div>
+      <p class="tag">A 4-star address in Kafr El Sheikh with 48 rooms and suites, three dining venues, and 250 m&sup2; of event space. Established 2018.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="#about">About Property</a>
+      <a href="#rooms">Rooms &amp; Suites</a>
+      <a href="#dining">Foods &amp; Beverages</a>
+      <a href="#meetings">Meetings &amp; Events</a>
+      <a href="#offers">Offers &amp; Packages</a>
+    </div>
+    <div class="footer-col">
+      <h4>Reservations</h4>
+      <a href="mailto:reservation@chain-luxe.com">reservation@chain-luxe.com</a>
+      <a href="tel:+201103145834">+20 110 314 5834</a>
+      <a href="https://www.bing.com/maps/search?q=The+Palm+Hotel+Kafr+El+Sheikh">Kafr El Sheikh, Egypt</a>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <a href="https://www.facebook.com/share/1SaDsaHpfk/">Facebook</a>
+      <a href="https://www.instagram.com/thepalmhotel.eg">Instagram</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 The Palm Hotel</span>
+    <span>Kafr El Sheikh, Egypt</span>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  });
+  const revealEls = document.querySelectorAll('.reveal:not(.in)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

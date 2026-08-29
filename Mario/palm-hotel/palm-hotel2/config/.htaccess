@@ -1,0 +1,10 @@
+# Deny all direct browser access to this folder — it contains DB
+# credentials and the app secret. Only PHP includes on the server
+# itself may read these files.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

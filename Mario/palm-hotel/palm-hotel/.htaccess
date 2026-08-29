@@ -1,0 +1,13 @@
+DirectoryIndex index.php index.html
+
+Options -Indexes
+
+<FilesMatch "\.(sql|md|log|env)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Force HTTPS (uncomment once your SSL certificate is active on Bluehost)
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

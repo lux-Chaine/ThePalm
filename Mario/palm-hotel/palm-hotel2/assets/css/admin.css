@@ -1,0 +1,196 @@
+:root {
+  --gold: #b08d57;
+  --ink: #1c1a17;
+  --paper: #faf8f5;
+  --line: #e7e1d8;
+  --muted: #837a6d;
+  --danger: #b3462c;
+  --success: #3f7a4f;
+  --pending: #b08d57;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Auth pages (login / setup) ---------- */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1c1a17, #33291c);
+}
+.auth-card {
+  background: #fff;
+  padding: 40px 36px;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.3);
+}
+.auth-card h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+.auth-card .hint { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+.auth-card label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.auth-card input {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 14px;
+}
+.auth-card button {
+  width: 100%;
+  padding: 12px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  letter-spacing: .5px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.auth-card button:hover { background: var(--gold); }
+.error { color: var(--danger); font-size: 14px; }
+.success { color: var(--success); font-size: 14px; }
+.notice { background: #f4efe6; padding: 10px 14px; border-radius: 4px; font-size: 14px; }
+
+/* ---------- Shell layout ---------- */
+.admin-shell { display: flex; min-height: 100vh; }
+
+.admin-sidebar {
+  width: 220px;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px;
+  flex-shrink: 0;
+}
+.admin-brand {
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+.admin-brand span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.admin-sidebar nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.admin-sidebar nav a {
+  color: #cfc7ba;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.admin-sidebar nav a:hover { background: rgba(255,255,255,.08); text-decoration: none; }
+.admin-sidebar nav a.active { background: var(--gold); color: #1c1a17; font-weight: 600; }
+.admin-user { font-size: 12px; color: #a9a094; border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; }
+.admin-user strong { color: #fff; }
+.logout-link { display: inline-block; margin-top: 8px; color: var(--gold); }
+
+.admin-content { flex: 1; padding: 32px 40px; max-width: 1200px; }
+.admin-content h1 { margin: 0 0 4px; font-size: 24px; }
+.subtitle { color: var(--muted); margin: 0 0 24px; }
+.section-title { font-size: 16px; margin: 30px 0 12px; }
+
+/* ---------- Stat cards ---------- */
+.stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 10px; }
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.stat-num { font-size: 28px; font-weight: 700; color: var(--ink); }
+.stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ---------- Tables ---------- */
+.data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 6px; overflow: hidden; margin-top: 8px; }
+.data-table th, .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 13px; text-align: left; vertical-align: top; }
+.data-table th { background: #f3efe8; font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: .5px; }
+.data-table .empty { text-align: center; color: var(--muted); padding: 30px; }
+.muted { color: var(--muted); }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fff; }
+.badge-pending { background: var(--pending); }
+.badge-confirmed { background: var(--success); }
+.badge-cancelled { background: var(--danger); }
+
+.filter-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.filter-pill { padding: 6px 14px; border-radius: 20px; background: #fff; border: 1px solid var(--line); font-size: 13px; color: var(--ink); }
+.filter-pill.active { background: var(--ink); color: #fff; }
+.filter-pill:hover { text-decoration: none; }
+
+.actions-cell { display: flex; gap: 8px; align-items: center; }
+.inline-form { display: inline-block; }
+.inline-form select { padding: 5px 8px; border-radius: 4px; border: 1px solid var(--line); font-size: 12px; }
+
+.btn-primary {
+  display: inline-block;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.btn-primary:hover { background: var(--gold); text-decoration: none; }
+.btn-secondary-small, .btn-danger-small {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+}
+.btn-danger-small { color: var(--danger); border-color: var(--danger); }
+.btn-danger-small:hover { background: var(--danger); color: #fff; text-decoration: none; }
+.btn-secondary-small:hover { background: #f3efe8; text-decoration: none; }
+
+/* ---------- Forms ---------- */
+.admin-form { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 24px; max-width: 720px; }
+.admin-form label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.admin-form input[type=text], .admin-form input[type=number], .admin-form textarea {
+  display: block; width: 100%; padding: 9px 10px; margin-top: 6px;
+  border: 1px solid var(--line); border-radius: 4px; font-size: 14px; font-family: inherit;
+}
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 20px; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; }
+.checkbox-label input { width: auto; }
+.form-actions { display: flex; gap: 12px; align-items: center; margin-top: 10px; }
+
+@media (max-width: 900px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar { width: 100%; }
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .form-grid { grid-template-columns: 1fr; }
+}
