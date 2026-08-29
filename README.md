@@ -1,11 +1,11 @@
-# Palm Application
+# Palm Hotel ERP - Mini-ERP System
 
-A modern full-stack web application built with clean architecture principles, featuring a Laravel Modular Monolith backend and Svelte MVC frontend.
+A comprehensive hotel management system built as a Mini-ERP using Laravel Modular Monolith architecture and Svelte MVC frontend.
 
 ## 🏗️ Architecture
 
 ### Backend (Laravel - Modular Monolith)
-- **Modular Monolith Architecture**: Independent modules (Identity, Sales) within a single application
+- **Modular Monolith Architecture**: Independent modules (Identity, Rooms, Reservations, Accounting) within a single application
 - **CQRS Pattern**: Clean separation between Commands and Queries
 - **Unit of Work**: Centralized transaction management
 - **Repository Pattern**: Abstract data access layer
@@ -26,21 +26,40 @@ Palm/
 │   │   ├── Core/                               # Shared infrastructure
 │   │   │   ├── Database/                       # Unit of Work pattern
 │   │   │   └── Bus/                            # Command & Query Bus
+│   │   ├── Models/                             # Eloquent Models
+│   │   │   ├── User.php                        # User model
+│   │   │   ├── Room.php                       # Room model
+│   │   │   ├── Guest.php                      # Guest model
+│   │   │   ├── Reservation.php                # Reservation model
+│   │   │   ├── Invoice.php                    # Invoice model
+│   │   │   └── Expense.php                    # Expense model
 │   │   └── Modules/                            # Independent modules
-│   │       ├── Identity/                       # User management
-│   │       │   ├── Domain/                     # Entities & interfaces
+│   │       ├── Identity/                       # User management & permissions
+│   │       │   ├── Domain/                     # User entity & interfaces
 │   │       │   ├── Application/                # Commands, Queries, Handlers
 │   │       │   ├── Infrastructure/             # Repository implementations
 │   │       │   └── Presentation/               # API Controllers
-│   │       └── Sales/                          # Sales management
-│   │           ├── Domain/                     # Products, Orders entities
+│   │       ├── Rooms/                          # Room management
+│   │       │   ├── Domain/                     # Room entity & interfaces
+│   │       │   ├── Application/                # Commands, Queries, Handlers
+│   │       │   ├── Infrastructure/             # Repository implementations
+│   │       │   └── Presentation/               # API Controllers
+│   │       ├── Reservations/                   # Reservation management
+│   │       │   ├── Domain/                     # Reservation entity & interfaces
+│   │       │   ├── Application/                # Commands, Queries, Handlers
+│   │       │   ├── Infrastructure/             # Repository implementations
+│   │       │   └── Presentation/               # API Controllers
+│   │       └── Accounting/                    # Financial management
+│   │           ├── Domain/                     # Invoice & Expense entities
 │   │           ├── Application/                # Commands, Queries, Handlers
 │   │           ├── Infrastructure/             # Repository implementations
 │   │           └── Presentation/               # API Controllers
 │   ├── config/                                # Configuration files
 │   ├── database/                              # Database migrations
+│   │   └── migrations/                        # Migration files
 │   ├── routes/                                # API routes
 │   ├── openapi.yaml                           # OpenAPI specification
+│   ├── run_migrations.php                     # Standalone migration runner
 │   └── public/
 │       └── swagger.html                        # Interactive API docs
 │
@@ -83,14 +102,18 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=palm
+DB_DATABASE=palm_hotel
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
 5. Run migrations:
 ```bash
+# Option 1: Using Laravel artisan (if composer is installed)
 php artisan migrate
+
+# Option 2: Using standalone migration runner (recommended for development)
+php run_migrations.php
 ```
 
 6. Start the development server:
@@ -143,19 +166,30 @@ The frontend will be available at `http://localhost:3000`
 - `PUT /api/v1/users/{id}` - Update user
 - `DELETE /api/v1/users/{id}` - Delete user
 
-#### Products (Sales Module)
-- `GET /api/v1/products` - List all products
-- `POST /api/v1/products` - Create new product
-- `PUT /api/v1/products/{id}` - Update product
+#### Rooms (Rooms Module)
+- `GET /api/v1/rooms` - List all rooms
+- `POST /api/v1/rooms` - Create new room
+- `PUT /api/v1/rooms/{id}` - Update room status
 
-#### Orders (Sales Module)
-- `POST /api/v1/orders` - Create new order
-- `PUT /api/v1/orders/{id}/status` - Update order status
+#### Reservations (Reservations Module)
+- `GET /api/v1/reservations` - List all reservations
+- `POST /api/v1/reservations` - Create new reservation
+- `PUT /api/v1/reservations/{id}/status` - Update reservation status
+
+#### Invoices (Accounting Module)
+- `GET /api/v1/invoices` - List all invoices
+- `POST /api/v1/invoices` - Create new invoice
+- `PUT /api/v1/invoices/{id}/payment` - Process payment
+
+#### Expenses (Accounting Module)
+- `GET /api/v1/expenses` - List all expenses
+- `POST /api/v1/expenses` - Create new expense
+- `PUT /api/v1/expenses/{id}/status` - Update expense status
 
 ## 🎯 Design Patterns & Principles
 
 ### Backend Patterns
-- **Modular Monolith**: Independent modules within single application
+- **Modular Monolith**: Independent modules (Identity, Rooms, Reservations, Accounting) within single application
 - **CQRS**: Separate command and query handlers
 - **Unit of Work**: Centralized transaction management
 - **Repository Pattern**: Abstract data access
@@ -214,9 +248,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Team
 
-- **Development Team**: Palm Development Team
-- **Architecture**: Modular Monolith with CQRS
-- **Frontend**: Svelte MVC Architecture
+- **Development Team**: Palm Hotel ERP Development Team
+- **Architecture**: Modular Monolith with CQRS for Hotel Management
+- **Frontend**: Svelte MVC Architecture for Hotel Operations
+- **Purpose**: Mini-ERP System for Hotel Management
 
 ## 🙏 Acknowledgments
 
