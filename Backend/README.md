@@ -71,24 +71,56 @@ php artisan migrate
 php artisan serve
 ```
 
-## API Endpoints
+## API Documentation
 
-### Users (Identity Module)
-- `GET /api/v1/users` - List all users
+The API is fully documented using OpenAPI 3.0 specification.
+
+### Interactive Documentation
+Since Laravel doesn't include Swagger UI by default, we have two options:
+
+#### Option 1: Standalone Swagger Server (Recommended for Development)
+```bash
+php -S localhost:8080 swagger.php
+```
+Then access: `http://localhost:8080/swagger`
+
+#### Option 2: Native Laravel Integration (Requires Package Installation)
+```bash
+composer require darkaonline/l5-swagger
+php artisan vendor:publish --provider="L5Swagger\L5SwaggerServiceProvider"
+php artisan l5-swagger:generate
+```
+Then access: `http://localhost:8000/api/documentation`
+
+### OpenAPI Specification
+The complete OpenAPI specification is available in `openapi.yaml` and can be accessed at:
+- `http://localhost:8080/openapi.yaml` (when using standalone server)
+- `http://localhost:8000/openapi.yaml` (when using Laravel integration)
+
+### API Endpoints
+
+#### Users (Identity Module)
+- `GET /api/v1/users` - List all users (with pagination)
 - `GET /api/v1/users/{id}` - Get user by ID
 - `POST /api/v1/users` - Create new user
 - `PUT /api/v1/users/{id}` - Update user
 - `DELETE /api/v1/users/{id}` - Delete user
 
-### Products (Sales Module)
-- `GET /api/v1/products` - List all products
+#### Products (Sales Module)
+- `GET /api/v1/products` - List all products (with active filter)
 - `GET /api/v1/products/{id}` - Get product by ID
 - `POST /api/v1/products` - Create new product
 - `PUT /api/v1/products/{id}` - Update product
 
-### Orders (Sales Module)
+#### Orders (Sales Module)
 - `POST /api/v1/orders` - Create new order
 - `PUT /api/v1/orders/{id}/status` - Update order status
+
+### Authentication
+The API uses JWT Bearer authentication. Include the token in the Authorization header:
+```
+Authorization: Bearer <your-jwt-token>
+```
 
 ## Design Patterns
 

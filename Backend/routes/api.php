@@ -5,6 +5,11 @@ use App\Modules\Identity\Presentation\UserController;
 use App\Modules\Sales\Presentation\ProductController;
 use App\Modules\Sales\Presentation\OrderController;
 
+// Swagger Documentation Route
+Route::get('/documentation', function () {
+    return view('swagger');
+});
+
 Route::prefix('v1')->group(function () {
     // Identity Module Routes
     Route::prefix('users')->group(function () {

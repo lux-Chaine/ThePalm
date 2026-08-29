@@ -45,6 +45,20 @@ if (file_exists(__DIR__ . '/.env')) {
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+// Swagger UI Route
+if ($requestUri === '/swagger.html' || $requestUri === '/swagger') {
+    header('Content-Type: text/html');
+    readfile(__DIR__ . '/public/swagger.html');
+    exit;
+}
+
+// OpenAPI Spec Route
+if ($requestUri === '/openapi.yaml' || $requestUri === '/openapi.json') {
+    header('Content-Type: application/yaml');
+    readfile(__DIR__ . '/openapi.yaml');
+    exit;
+}
+
 // API Routes
 if (strpos($requestUri, '/api/v1/') === 0) {
     header('Content-Type: application/json');
