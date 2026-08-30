@@ -18,9 +18,9 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->enum('payment_status', ['unpaid', 'partial', 'paid', 'overdue'])->default('unpaid');
-            $table->enum('payment_method', ['cash', 'credit_card', 'bank_transfer', 'online'])->nullable();
+            $table->enum('payment_method', ['cash', 'credit_card', 'debit_card', 'bank_transfer'])->nullable();
             $table->date('due_date');
-            $table->date('paid_date')->nullable();
+            $table->date('invoice_date')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

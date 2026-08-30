@@ -3,6 +3,7 @@
 namespace App\Modules\Accounting\Application\Commands;
 
 use App\Core\Bus\CommandHandlerInterface;
+use App\Core\Bus\CommandInterface;
 use App\Core\Database\UnitOfWorkInterface;
 use App\Modules\Accounting\Domain\Invoice;
 use App\Modules\Accounting\Domain\InvoiceRepositoryInterface;

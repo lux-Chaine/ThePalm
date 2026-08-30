@@ -13,7 +13,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'receptionist', 'accountant'])->default('receptionist');
+            $table->enum('role', ['admin', 'manager', 'receptionist', 'housekeeping', 'maintenance', 'accountant'])->default('receptionist');
+            $table->enum('user_type', ['employee'])->default('employee');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

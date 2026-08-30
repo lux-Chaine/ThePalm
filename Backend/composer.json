@@ -60,8 +60,15 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        }
+        },
+        "platform-check": false
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "audit": {
+        "abandoned": "ignore",
+        "ignore": {
+            "laravel/framework": "*"
+        }
+    }
 }

@@ -30,6 +30,7 @@ class UpdateUserCommandHandler implements CommandHandlerInterface
                 'email' => $command->email,
                 'password' => $command->password ? Hash::make($command->password) : null,
                 'role' => $command->role,
+                'user_type' => $command->userType,
             ], fn($value) => $value !== null);
 
             return $this->userRepository->update($user, $data);

@@ -3,6 +3,7 @@
 namespace App\Modules\Rooms\Application\Commands;
 
 use App\Core\Bus\CommandHandlerInterface;
+use App\Core\Bus\CommandInterface;
 use App\Core\Database\UnitOfWorkInterface;
 use App\Modules\Rooms\Domain\Room;
 use App\Modules\Rooms\Domain\RoomRepositoryInterface;

@@ -46,7 +46,7 @@ $requestUri = $_SERVER['REQUEST_URI'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 // Swagger UI Route
-if ($requestUri === '/swagger.html' || $requestUri === '/swagger') {
+if ($requestUri === '/' || $requestUri === '/swagger.html' || $requestUri === '/swagger') {
     header('Content-Type: text/html');
     readfile(__DIR__ . '/public/swagger.html');
     exit;
@@ -78,16 +78,28 @@ if (strpos($requestUri, '/api/v1/') === 0) {
                 handleUserRequest($controller, $requestMethod, $action, $id);
                 break;
                 
-            case 'products':
-                require_once __DIR__ . '/app/Modules/Sales/Presentation/ProductController.php';
-                $controller = new App\Modules\Sales\Presentation\ProductController();
-                handleProductRequest($controller, $requestMethod, $action, $id);
+            case 'rooms':
+                require_once __DIR__ . '/app/Modules/Rooms/Presentation/RoomController.php';
+                $controller = new App\Modules\Rooms\Presentation\RoomController();
+                handleRoomRequest($controller, $requestMethod, $action, $id);
                 break;
                 
-            case 'orders':
-                require_once __DIR__ . '/app/Modules/Sales/Presentation/OrderController.php';
-                $controller = new App\Modules\Sales\Presentation\OrderController();
-                handleOrderRequest($controller, $requestMethod, $action, $id);
+            case 'reservations':
+                require_once __DIR__ . '/app/Modules/Reservations/Presentation/ReservationController.php';
+                $controller = new App\Modules\Reservations\Presentation\ReservationController();
+                handleReservationRequest($controller, $requestMethod, $action, $id);
+                break;
+                
+            case 'invoices':
+                require_once __DIR__ . '/app/Modules/Accounting/Presentation/InvoiceController.php';
+                $controller = new App\Modules\Accounting\Presentation\InvoiceController();
+                handleInvoiceRequest($controller, $requestMethod, $action, $id);
+                break;
+                
+            case 'expenses':
+                require_once __DIR__ . '/app/Modules/Accounting/Presentation/ExpenseController.php';
+                $controller = new App\Modules\Accounting\Presentation\ExpenseController();
+                handleExpenseRequest($controller, $requestMethod, $action, $id);
                 break;
                 
             default:
@@ -108,6 +120,10 @@ function handleUserRequest($controller, $method, $action, $id) {
         case 'GET':
             if ($action === '' || $action === 'index') {
                 echo json_encode($controller->index());
+            } elseif ($action === 'roles') {
+                echo json_encode($controller->getRoles());
+            } elseif ($id && $action === 'permissions') {
+                echo json_encode($controller->getUserPermissions($id));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -116,12 +132,21 @@ function handleUserRequest($controller, $method, $action, $id) {
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
                 echo json_encode($controller->store($data));
+            } elseif ($action === 'login') {
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode($controller->login($data));
             }
             break;
         case 'PUT':
             if ($id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->update($id, $data));
+                if ($action === 'role') {
+                    echo json_encode($controller->updateRole($data, $id));
+                } elseif ($action === 'reset-password') {
+                    echo json_encode($controller->resetPassword($data, $id));
+                } else {
+                    echo json_encode($controller->update($id, $data));
+                }
             }
             break;
         case 'DELETE':
@@ -132,7 +157,7 @@ function handleUserRequest($controller, $method, $action, $id) {
     }
 }
 
-function handleProductRequest($controller, $method, $action, $id) {
+function handleRoomRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
@@ -156,8 +181,15 @@ function handleProductRequest($controller, $method, $action, $id) {
     }
 }
 
-function handleOrderRequest($controller, $method, $action, $id) {
+function handleReservationRequest($controller, $method, $action, $id) {
     switch ($method) {
+        case 'GET':
+            if ($action === '' || $action === 'index') {
+                echo json_encode($controller->index());
+            } elseif ($id) {
+                echo json_encode($controller->show($id));
+            }
+            break;
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
@@ -167,7 +199,55 @@ function handleOrderRequest($controller, $method, $action, $id) {
         case 'PUT':
             if ($action === 'status' && $id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->updateStatus($id, $data['status'] ?? 'pending'));
+                echo json_encode($controller->updateStatus($id, $data));
+            }
+            break;
+    }
+}
+
+function handleInvoiceRequest($controller, $method, $action, $id) {
+    switch ($method) {
+        case 'GET':
+            if ($action === '' || $action === 'index') {
+                echo json_encode($controller->index());
+            } elseif ($id) {
+                echo json_encode($controller->show($id));
+            }
+            break;
+        case 'POST':
+            if ($action === '' || $action === 'store') {
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode($controller->store($data));
+            }
+            break;
+        case 'PUT':
+            if ($action === 'payment' && $id) {
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode($controller->updatePayment($id, $data));
+            }
+            break;
+    }
+}
+
+function handleExpenseRequest($controller, $method, $action, $id) {
+    switch ($method) {
+        case 'GET':
+            if ($action === '' || $action === 'index') {
+                echo json_encode($controller->index());
+            } elseif ($id) {
+                echo json_encode($controller->show($id));
+            }
+            break;
+        case 'POST':
+            if ($action === '' || $action === 'store') {
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode($controller->store($data));
+            }
+            break;
+        case 'PUT':
+            if ($action === 'status' && $id) {
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode($controller->updateStatus($id, $data));
             }
             break;
     }

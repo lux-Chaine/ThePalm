@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('guest_id')->constrained('guests')->onDelete('cascade');
             $table->foreignId('room_id')->constrained('rooms')->onDelete('restrict');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->date('check_in_date');
-            $table->date('check_out_date');
+            $table->date('check_in');
+            $table->date('check_out');
             $table->integer('number_of_guests')->default(1);
             $table->decimal('total_amount', 10, 2);
             $table->decimal('deposit_amount', 10, 2)->default(0);

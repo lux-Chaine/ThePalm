@@ -3,20 +3,22 @@
 // Standalone migration runner for Palm Hotel ERP
 // This runs migrations without requiring full Laravel installation
 
-// Database configuration
-$host = '127.0.0.1';
+// Database configuration for XAMPP
+$host = 'localhost';
 $port = 3306;
 $dbname = 'palm_hotel';
 $username = 'root';
-$password = '';
+$password = ''; // XAMPP default MySQL password is empty
 
 try {
-    // Create PDO connection
+    // Create PDO connection for XAMPP
     $dsn = "mysql:host=$host;port=$port;charset=utf8mb4";
     $pdo = new PDO($dsn, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    echo "Connected to MySQL server successfully!\n";
+    echo "✓ Connected to XAMPP MySQL successfully!\n";
+    echo "  Host: $host:$port\n";
+    echo "  Database: $dbname\n\n";
 
     // Create database if it doesn't exist
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");

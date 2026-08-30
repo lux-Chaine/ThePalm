@@ -23,6 +23,7 @@ class CreateUserCommandHandler implements CommandHandlerInterface
                 'email' => $command->email,
                 'password' => Hash::make($command->password),
                 'role' => $command->role,
+                'user_type' => $command->userType,
             ];
 
             return $this->userRepository->create($data);

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('amount', 10, 2);
             $table->date('expense_date');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'paid'])->default('pending');
             $table->text('receipt_url')->nullable();
+            $table->text('rejection_reason')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

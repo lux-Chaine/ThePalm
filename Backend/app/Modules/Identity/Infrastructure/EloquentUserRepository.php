@@ -37,4 +37,14 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         return $user->delete();
     }
+
+    public function findByRole(string $role): array
+    {
+        return User::where('role', $role)->get()->toArray();
+    }
+
+    public function countByRole(string $role): int
+    {
+        return User::where('role', $role)->count();
+    }
 }
