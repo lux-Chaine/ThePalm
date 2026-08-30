@@ -2,7 +2,6 @@
 
 namespace App\Core\Bus;
 
-use Illuminate\Support\Facades\App;
 use Exception;
 
 class CommandBus
@@ -15,7 +14,8 @@ class CommandBus
             throw new Exception("Command handler not found: {$handlerClass}");
         }
 
-        $handler = App::make($handlerClass);
+        // Instantiate handler directly without Laravel's container
+        $handler = new $handlerClass();
         
         if (!$handler instanceof CommandHandlerInterface) {
             throw new Exception("Handler must implement CommandHandlerInterface");
@@ -27,6 +27,14 @@ class CommandBus
     protected function getHandlerClass(CommandInterface $command): string
     {
         $commandClass = get_class($command);
-        return str_replace('Command', 'CommandHandler', $commandClass) . 'Handler';
+        // Extract namespace and class name
+        $lastSlash = strrpos($commandClass, '\\');
+        $namespace = substr($commandClass, 0, $lastSlash);
+        $className = substr($commandClass, $lastSlash + 1);
+        
+        // Replace 'Command' with 'CommandHandler' in class name only
+        $handlerClassName = str_replace('Command', 'CommandHandler', $className);
+        
+        return $namespace . '\\' . $handlerClassName;
     }
 }

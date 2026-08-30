@@ -36,7 +36,8 @@ try {
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
-                role ENUM('admin', 'receptionist', 'accountant') DEFAULT 'receptionist',
+                role ENUM('admin', 'manager', 'receptionist', 'housekeeping', 'maintenance', 'accountant') DEFAULT 'receptionist',
+                user_type ENUM('staff', 'guest') DEFAULT 'staff',
                 email_verified_at TIMESTAMP NULL,
                 remember_token VARCHAR(100) NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -139,6 +140,21 @@ try {
                 INDEX idx_invoice_number (invoice_number),
                 INDEX idx_payment_status (payment_status),
                 INDEX idx_due_date (due_date)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ",
+
+        'create_settings_table' => "
+            CREATE TABLE IF NOT EXISTS settings (
+                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                `key` VARCHAR(255) NOT NULL UNIQUE,
+                value TEXT NOT NULL,
+                type ENUM('string', 'number', 'boolean', 'json') DEFAULT 'string',
+                category ENUM('general', 'hotel', 'pricing', 'booking', 'billing') DEFAULT 'general',
+                description TEXT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_key (`key`),
+                INDEX idx_category (category)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ",
 

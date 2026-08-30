@@ -2,7 +2,6 @@
 
 namespace App\Core\Bus;
 
-use Illuminate\Support\Facades\App;
 use Exception;
 
 class QueryBus
@@ -15,7 +14,8 @@ class QueryBus
             throw new Exception("Query handler not found: {$handlerClass}");
         }
 
-        $handler = App::make($handlerClass);
+        // Instantiate handler directly without Laravel's container
+        $handler = new $handlerClass();
         
         if (!$handler instanceof QueryHandlerInterface) {
             throw new Exception("Handler must implement QueryHandlerInterface");
@@ -27,6 +27,6 @@ class QueryBus
     protected function getHandlerClass(QueryInterface $query): string
     {
         $queryClass = get_class($query);
-        return str_replace('Query', 'QueryHandler', $queryClass) . 'Handler';
+        return str_replace('Query', 'QueryHandler', $queryClass);
     }
 }

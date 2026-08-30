@@ -29,6 +29,12 @@ tags:
     description: Invoice management operations (Accounting Module)
   - name: Expenses
     description: Expense management operations (Accounting Module)
+  - name: Guests
+    description: Guest management operations (Guests Module)
+  - name: Reports
+    description: Report generation operations (Reports Module)
+  - name: Settings
+    description: System settings operations (Settings Module)
 
 paths:
   /users:
@@ -250,7 +256,7 @@ paths:
       tags:
         - Users
       summary: User login
-      description: Authenticate user and return token
+      description: Authenticate user and return access token
       operationId: loginUser
       requestBody:
         required: true
@@ -265,7 +271,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: user@example.com
+                  example: admin@palm.com
                 password:
                   type: string
                   format: password
@@ -286,15 +292,83 @@ paths:
                     properties:
                       user:
                         $ref: '#/components/schemas/User'
-                      token:
+                      access_token:
                         type: string
                         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                      refresh_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                      token_type:
+                        type: string
+                        example: Bearer
+                      expires_in:
+                        type: integer
+                        example: 3600
                       expires_at:
                         type: string
                         format: date-time
-                        example: 2024-01-16 12:00:00
+                        example: 2026-08-30T13:31:06Z
         '401':
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/refresh-token:
+    post:
+      tags:
+        - Users
+      summary: Refresh access token
+      description: Get a new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                      token_type:
+                        type: string
+                        example: Bearer
+                      expires_in:
+                        type: integer
+                        example: 3600
+                      expires_at:
+                        type: string
+                        format: date-time
+                        example: 2026-08-30T13:31:06Z
+        '401':
+          description: Invalid or expired refresh token
           content:
             application/json:
               schema:
@@ -526,6 +600,687 @@ paths:
                           items:
                             type: string
                           example: ['users.manage', 'roles.manage', 'rooms.manage']
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /guests:
+    get:
+      tags:
+        - Guests
+      summary: Get all guests
+      description: Retrieve a list of all guests with optional pagination
+      operationId: getAllGuests
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Guest'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Guests
+      summary: Create a new guest
+      description: Register a new guest in the system
+      operationId: createGuest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGuestRequest'
+      responses:
+        '201':
+          description: Guest created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Guest'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /guests/search:
+    get:
+      tags:
+        - Guests
+      summary: Search guests
+      description: Search guests by various criteria
+      operationId: searchGuests
+      parameters:
+        - name: name
+          in: query
+          description: Guest name to search for
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Guest email to search for
+          schema:
+            type: string
+            format: email
+        - name: phone
+          in: query
+          description: Guest phone to search for
+          schema:
+            type: string
+        - name: identity_number
+          in: query
+          description: Guest identity number to search for
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: Guest city to search for
+          schema:
+            type: string
+        - name: country
+          in: query
+          description: Guest country to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Guest'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /guests/{id}:
+    get:
+      tags:
+        - Guests
+      summary: Get guest by ID
+      description: Retrieve a specific guest by their ID
+      operationId: getGuestById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Guest ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Guest'
+        '404':
+          description: Guest not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Guests
+      summary: Update guest
+      description: Update an existing guest's information
+      operationId: updateGuest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Guest ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGuestRequest'
+      responses:
+        '200':
+          description: Guest updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Guest'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Guest not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Guests
+      summary: Delete guest
+      description: Delete a guest by their ID
+      operationId: deleteGuest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Guest ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Guest deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Guest deleted successfully
+        '404':
+          description: Guest not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /reports/financial:
+    get:
+      tags:
+        - Reports
+      summary: Get financial report
+      description: Generate financial report for a date range
+      operationId: getFinancialReport
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Start date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          description: End date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: type
+          in: query
+          description: Report type filter
+          schema:
+            type: string
+            enum: [income, expense, profit]
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        type: object
+                        properties:
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
+                      income:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          count:
+                            type: integer
+                          invoices:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Invoice'
+                      expenses:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          count:
+                            type: integer
+                          expenses:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Expense'
+                      profit:
+                        type: number
+                      profit_margin:
+                        type: number
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /reports/reservations:
+    get:
+      tags:
+        - Reports
+      summary: Get reservation report
+      description: Generate reservation report for a date range
+      operationId: getReservationReport
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Start date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          description: End date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          description: Filter by reservation status
+          schema:
+            type: string
+            enum: [pending, confirmed, checked_in, checked_out, cancelled]
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        type: object
+                        properties:
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
+                      total_reservations:
+                        type: integer
+                      by_status:
+                        type: object
+                        properties:
+                          confirmed:
+                            type: integer
+                          checked_in:
+                            type: integer
+                          checked_out:
+                            type: integer
+                          cancelled:
+                            type: integer
+                      reservations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /reports/occupancy:
+    get:
+      tags:
+        - Reports
+      summary: Get occupancy report
+      description: Generate room occupancy report for a date range
+      operationId: getOccupancyReport
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Start date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          description: End date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        type: object
+                        properties:
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
+                      total_rooms:
+                        type: integer
+                      occupied_rooms:
+                        type: integer
+                      available_rooms:
+                        type: integer
+                      occupancy_rate:
+                        type: number
+                      by_room_type:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          properties:
+                            total:
+                              type: integer
+                            occupied:
+                              type: integer
+                            occupancy_rate:
+                              type: number
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /settings:
+    get:
+      tags:
+        - Settings
+      summary: Get all settings
+      description: Retrieve all system settings or filter by category
+      operationId: getAllSettings
+      parameters:
+        - name: category
+          in: query
+          description: Filter by category (general, hotel, pricing, booking, billing)
+          schema:
+            type: string
+            enum: [general, hotel, pricing, booking, billing]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Setting'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /settings/{key}:
+    get:
+      tags:
+        - Settings
+      summary: Get setting by key
+      description: Retrieve a specific setting by its key
+      operationId: getSettingByKey
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Setting key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Setting'
+        '404':
+          description: Setting not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Settings
+      summary: Update setting
+      description: Update a setting's value
+      operationId: updateSetting
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Setting key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - value
+              properties:
+                value:
+                  type: string
+                  example: new value
+      responses:
+        '200':
+          description: Setting updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Setting updated successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Setting not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '500':
           description: Internal server error
           content:
@@ -1400,6 +2155,183 @@ components:
           type: string
           enum: [employee]
           example: employee
+
+    Guest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Ahmed Mohamed
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: ahmed@example.com
+        phone:
+          type: string
+          example: +201234567890
+        identity_number:
+          type: string
+          example: 12345678901234
+        identity_type:
+          type: string
+          enum: [national_id, passport, driving_license]
+          example: national_id
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          example: 1990-01-01
+        address:
+          type: string
+          nullable: true
+          example: 123 Main Street
+        city:
+          type: string
+          nullable: true
+          example: Cairo
+        country:
+          type: string
+          example: Egypt
+        notes:
+          type: string
+          nullable: true
+          example: VIP guest
+        total_reservations:
+          type: integer
+          example: 5
+        active_reservations:
+          type: integer
+          example: 2
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateGuestRequest:
+      type: object
+      required:
+        - name
+        - phone
+        - identity_number
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: Ahmed Mohamed
+        phone:
+          type: string
+          maxLength: 20
+          example: +201234567890
+        identity_number:
+          type: string
+          maxLength: 50
+          example: 12345678901234
+        identity_type:
+          type: string
+          enum: [national_id, passport, driving_license]
+          default: national_id
+          example: national_id
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: ahmed@example.com
+        date_of_birth:
+          type: string
+          format: date
+          example: 1990-01-01
+        address:
+          type: string
+          maxLength: 500
+          example: 123 Main Street
+        city:
+          type: string
+          maxLength: 100
+          example: Cairo
+        country:
+          type: string
+          maxLength: 100
+          example: Egypt
+        notes:
+          type: string
+          maxLength: 1000
+          example: VIP guest
+
+    UpdateGuestRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: Ahmed Mohamed
+        phone:
+          type: string
+          maxLength: 20
+          example: +201234567890
+        identity_number:
+          type: string
+          maxLength: 50
+          example: 12345678901234
+        identity_type:
+          type: string
+          enum: [national_id, passport, driving_license]
+          example: national_id
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: ahmed@example.com
+        date_of_birth:
+          type: string
+          format: date
+          example: 1990-01-01
+        address:
+          type: string
+          maxLength: 500
+          example: 123 Main Street
+        city:
+          type: string
+          maxLength: 100
+          example: Cairo
+        country:
+          type: string
+          maxLength: 100
+          example: Egypt
+        notes:
+          type: string
+          maxLength: 1000
+          example: VIP guest
+
+    Setting:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        key:
+          type: string
+          example: hotel_name
+        value:
+          type: string
+          example: Palm Hotel
+        type:
+          type: string
+          enum: [string, number, boolean, json]
+          example: string
+        category:
+          type: string
+          enum: [general, hotel, pricing, booking, billing]
+          example: hotel
+        description:
+          type: string
+          nullable: true
+          example: Hotel name displayed on invoices
 
     Room:
       type: object

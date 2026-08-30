@@ -4,13 +4,16 @@ namespace App\Modules\Identity\Application\Commands;
 
 use App\Core\Bus\CommandHandlerInterface;
 use App\Core\Bus\CommandInterface;
+use App\Core\Auth\JWT;
 use App\Modules\Identity\Domain\UserRepositoryInterface;
+use App\Modules\Identity\Infrastructure\EloquentUserRepository;
 
 class LoginCommandHandler implements CommandHandlerInterface
 {
-    public function __construct(
-        protected UserRepositoryInterface $userRepository
-    ) {}
+    public function __construct()
+    {
+        $this->userRepository = new EloquentUserRepository();
+    }
 
     public function handle(CommandInterface $command): array
     {
@@ -24,13 +27,17 @@ class LoginCommandHandler implements CommandHandlerInterface
             throw new \Exception("Invalid credentials");
         }
 
-        // Generate simple token (in production, use JWT)
-        $token = base64_encode($user->id . ':' . $user->email . ':' . time());
+        // Generate JWT tokens
+        $accessToken = JWT::generateAccessToken($user->id, $user->email, $user->role);
+        $refreshToken = JWT::generateRefreshToken($user->id);
 
         return [
             'user' => $user->toArray(),
-            'token' => $token,
-            'expires_at' => date('Y-m-d H:i:s', strtotime('+24 hours'))
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'token_type' => 'Bearer',
+            'expires_in' => 3600, // 1 hour
+            'expires_at' => date('Y-m-d H:i:s', time() + 3600)
         ];
     }
 }

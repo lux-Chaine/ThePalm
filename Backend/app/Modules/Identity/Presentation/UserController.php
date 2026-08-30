@@ -4,17 +4,17 @@ namespace App\Modules\Identity\Presentation;
 
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
+use App\Core\Http\Request;
 use App\Modules\Identity\Application\Commands\CreateUserCommand;
 use App\Modules\Identity\Application\Commands\UpdateUserCommand;
 use App\Modules\Identity\Application\Commands\DeleteUserCommand;
 use App\Modules\Identity\Application\Commands\LoginCommand;
 use App\Modules\Identity\Application\Commands\ResetPasswordCommand;
+use App\Modules\Identity\Application\Commands\RefreshTokenCommand;
 use App\Modules\Identity\Application\Queries\GetUserByIdQuery;
 use App\Modules\Identity\Application\Queries\GetAllUsersQuery;
 use App\Modules\Identity\Application\Queries\GetAllRolesQuery;
 use App\Modules\Identity\Application\Queries\GetUserPermissionsQuery;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class UserController
 {
@@ -23,173 +23,157 @@ class UserController
         protected QueryBus $queryBus
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): array
     {
-        $query = new GetAllUsersQuery(
-            page: $request->get('page'),
-            perPage: $request->get('per_page')
-        );
-
+        $query = new GetAllUsersQuery();
         $users = $this->queryBus->dispatch($query);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $users
-        ]);
+        ];
     }
 
-    public function show(int $id): JsonResponse
+    public function show(string $id): array
     {
         $query = new GetUserByIdQuery($id);
         $user = $this->queryBus->dispatch($query);
 
-        return response()->json([
+        if (!$user) {
+            return [
+                'success' => false,
+                'error' => 'User not found'
+            ];
+        }
+
+        return [
             'success' => true,
             'data' => $user
-        ]);
+        ];
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): array
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'sometimes|in:admin,manager,receptionist,housekeeping,maintenance,accountant',
-            'user_type' => 'sometimes|in:employee'
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'role' => 'required'
         ]);
+
+        if (!empty($validated)) {
+            return [
+                'success' => false,
+                'errors' => $validated
+            ];
+        }
 
         $command = new CreateUserCommand(
-            name: $validated['name'],
-            email: $validated['email'],
-            password: $validated['password'],
-            role: $validated['role'] ?? 'receptionist',
-            userType: $validated['user_type'] ?? 'employee'
+            name: $request->get('name'),
+            email: $request->get('email'),
+            password: $request->get('password'),
+            role: $request->get('role'),
+            userType: $request->get('user_type', 'staff')
         );
 
-        $user = $this->commandBus->dispatch($command);
+        $result = $this->commandBus->dispatch($command);
 
-        return response()->json([
+        return [
             'success' => true,
-            'data' => $user
-        ], 201);
+            'data' => $result
+        ];
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, string $id): array
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $id,
-            'password' => 'sometimes|string|min:8',
-            'role' => 'sometimes|in:admin,manager,receptionist,housekeeping,maintenance,accountant',
-            'user_type' => 'sometimes|in:employee'
-        ]);
-
         $command = new UpdateUserCommand(
-            userId: $id,
-            name: $validated['name'] ?? null,
-            email: $validated['email'] ?? null,
-            password: $validated['password'] ?? null,
-            role: $validated['role'] ?? null,
-            userType: $validated['user_type'] ?? null
+            id: $id,
+            name: $request->get('name'),
+            email: $request->get('email'),
+            password: $request->get('password'),
+            role: $request->get('role'),
+            userType: $request->get('user_type')
         );
 
-        $user = $this->commandBus->dispatch($command);
+        $result = $this->commandBus->dispatch($command);
 
-        return response()->json([
+        return [
             'success' => true,
-            'data' => $user
-        ]);
+            'data' => $result
+        ];
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(string $id): array
     {
         $command = new DeleteUserCommand($id);
         $this->commandBus->dispatch($command);
 
-        return response()->json([
+        return [
             'success' => true,
             'message' => 'User deleted successfully'
-        ]);
+        ];
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(Request $request): array
     {
         $validated = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string'
+            'password' => 'required'
         ]);
+
+        if (!empty($validated)) {
+            return [
+                'success' => false,
+                'errors' => $validated
+            ];
+        }
 
         $command = new LoginCommand(
-            email: $validated['email'],
-            password: $validated['password']
+            email: $request->get('email'),
+            password: $request->get('password')
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $result
-        ]);
+        ];
     }
 
-    public function resetPassword(Request $request, int $id): JsonResponse
+    public function refreshToken(Request $request): array
     {
-        $validated = $request->validate([
-            'new_password' => 'required|string|min:8'
-        ]);
-
-        $command = new ResetPasswordCommand(
-            userId: $id,
-            newPassword: $validated['new_password']
+        $command = new RefreshTokenCommand(
+            refreshToken: $request->get('refresh_token')
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $result
-        ]);
+        ];
     }
 
-    public function updateRole(Request $request, int $id): JsonResponse
-    {
-        $validated = $request->validate([
-            'role' => 'required|in:admin,manager,receptionist,housekeeping,maintenance,accountant'
-        ]);
-
-        $command = new UpdateUserCommand(
-            userId: $id,
-            role: $validated['role']
-        );
-
-        $user = $this->commandBus->dispatch($command);
-
-        return response()->json([
-            'success' => true,
-            'data' => $user
-        ]);
-    }
-
-    public function getRoles(): JsonResponse
+    public function getRoles(): array
     {
         $query = new GetAllRolesQuery();
         $roles = $this->queryBus->dispatch($query);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $roles
-        ]);
+        ];
     }
 
-    public function getUserPermissions(int $id): JsonResponse
+    public function getUserPermissions(string $id): array
     {
         $query = new GetUserPermissionsQuery($id);
         $permissions = $this->queryBus->dispatch($query);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $permissions
-        ]);
+        ];
     }
 }

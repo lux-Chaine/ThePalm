@@ -5,7 +5,7 @@ A comprehensive hotel management system built as a Mini-ERP using Laravel Modula
 ## 🏗️ Architecture
 
 ### Backend (Laravel - Modular Monolith)
-- **Modular Monolith Architecture**: Independent modules (Identity, Rooms, Reservations, Accounting) within a single application
+- **Modular Monolith Architecture**: Independent modules (Identity, Rooms, Reservations, Guests, Reports, Settings, Accounting) within a single application
 - **CQRS Pattern**: Clean separation between Commands and Queries
 - **Unit of Work**: Centralized transaction management
 - **Repository Pattern**: Abstract data access layer
@@ -46,6 +46,19 @@ Palm/
 │   │       │   └── Presentation/               # API Controllers
 │   │       ├── Reservations/                   # Reservation management
 │   │       │   ├── Domain/                     # Reservation entity & interfaces
+│   │       │   ├── Application/                # Commands, Queries, Handlers
+│   │       │   ├── Infrastructure/             # Repository implementations
+│   │       │   └── Presentation/               # API Controllers
+│   │       ├── Guests/                         # Guest management
+│   │       │   ├── Domain/                     # Guest entity & interfaces
+│   │       │   ├── Application/                # Commands, Queries, Handlers
+│   │       │   ├── Infrastructure/             # Repository implementations
+│   │       │   └── Presentation/               # API Controllers
+│   │       ├── Reports/                        # Report generation
+│   │       │   ├── Application/                # Report Queries & Handlers
+│   │       │   └── Presentation/               # API Controllers
+│   │       ├── Settings/                       # System settings
+│   │       │   ├── Domain/                     # Setting entity & interfaces
 │   │       │   ├── Application/                # Commands, Queries, Handlers
 │   │       │   ├── Infrastructure/             # Repository implementations
 │   │       │   └── Presentation/               # API Controllers
@@ -165,31 +178,58 @@ The frontend will be available at `http://localhost:3000`
 - `POST /api/v1/users` - Create new user
 - `PUT /api/v1/users/{id}` - Update user
 - `DELETE /api/v1/users/{id}` - Delete user
+- `POST /api/v1/users/login` - User login
+- `PUT /api/v1/users/{id}/role` - Update user role
+- `PUT /api/v1/users/{id}/reset-password` - Reset user password
+- `GET /api/v1/users/{id}/permissions` - Get user permissions
+- `GET /api/v1/roles` - Get all roles with permissions
 
 #### Rooms (Rooms Module)
 - `GET /api/v1/rooms` - List all rooms
 - `POST /api/v1/rooms` - Create new room
-- `PUT /api/v1/rooms/{id}` - Update room status
+- `GET /api/v1/rooms/{id}` - Get room by ID
+- `PUT /api/v1/rooms/{id}` - Update room
 
 #### Reservations (Reservations Module)
 - `GET /api/v1/reservations` - List all reservations
 - `POST /api/v1/reservations` - Create new reservation
+- `GET /api/v1/reservations/{id}` - Get reservation by ID
 - `PUT /api/v1/reservations/{id}/status` - Update reservation status
+
+#### Guests (Guests Module)
+- `GET /api/v1/guests` - List all guests
+- `POST /api/v1/guests` - Create new guest
+- `GET /api/v1/guests/{id}` - Get guest by ID
+- `PUT /api/v1/guests/{id}` - Update guest
+- `DELETE /api/v1/guests/{id}` - Delete guest
+- `GET /api/v1/guests/search` - Search guests
+
+#### Reports (Reports Module)
+- `GET /api/v1/reports/financial` - Generate financial report
+- `GET /api/v1/reports/reservations` - Generate reservation report
+- `GET /api/v1/reports/occupancy` - Generate room occupancy report
+
+#### Settings (Settings Module)
+- `GET /api/v1/settings` - Get all settings
+- `GET /api/v1/settings/{key}` - Get setting by key
+- `PUT /api/v1/settings/{key}` - Update setting
 
 #### Invoices (Accounting Module)
 - `GET /api/v1/invoices` - List all invoices
 - `POST /api/v1/invoices` - Create new invoice
-- `PUT /api/v1/invoices/{id}/payment` - Process payment
+- `GET /api/v1/invoices/{id}` - Get invoice by ID
+- `PUT /api/v1/invoices/{id}/payment` - Update invoice payment
 
 #### Expenses (Accounting Module)
 - `GET /api/v1/expenses` - List all expenses
 - `POST /api/v1/expenses` - Create new expense
+- `GET /api/v1/expenses/{id}` - Get expense by ID
 - `PUT /api/v1/expenses/{id}/status` - Update expense status
 
 ## 🎯 Design Patterns & Principles
 
 ### Backend Patterns
-- **Modular Monolith**: Independent modules (Identity, Rooms, Reservations, Accounting) within single application
+- **Modular Monolith**: Independent modules (Identity, Rooms, Reservations, Guests, Reports, Settings, Accounting) within single application
 - **CQRS**: Separate command and query handlers
 - **Unit of Work**: Centralized transaction management
 - **Repository Pattern**: Abstract data access

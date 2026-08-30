@@ -2,48 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-
-class User extends Authenticatable
+class User
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    public $id;
+    public $name;
+    public $email;
+    public $password;
+    public $role;
+    public $user_type;
+    public $email_verified_at;
+    public $remember_token;
+    public $created_at;
+    public $updated_at;
+    public $deleted_at;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'user_type',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    // Relationships
-    public function reservations(): HasMany
+    public function __construct(array $data = [])
     {
-        return $this->hasMany(Reservation::class);
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
     }
 
-    public function createdInvoices(): HasMany
+    public function toArray(): array
     {
-        return $this->hasMany(Invoice::class, 'created_by');
-    }
-
-    public function expenses(): HasMany
-    {
-        return $this->hasMany(Expense::class, 'created_by');
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+            'user_type' => $this->user_type,
+            'email_verified_at' => $this->email_verified_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 
     // Role helpers
@@ -75,11 +66,6 @@ class User extends Authenticatable
     public function isAccountant(): bool
     {
         return $this->role === 'accountant';
-    }
-
-    public function isEmployee(): bool
-    {
-        return $this->user_type === 'employee';
     }
 
     public function hasPermission(string $permission): bool
