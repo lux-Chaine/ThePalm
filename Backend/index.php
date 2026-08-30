@@ -3,6 +3,22 @@
 // Simple standalone PHP backend for Palm project
 // This implements the modular monolith architecture without requiring full Laravel
 
+// CORS Headers - Enable cross-origin requests for frontend
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400');
+
+// Handle preflight OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Set JSON content type for API responses
+header('Content-Type: application/json; charset=utf-8');
+
 // Autoloader
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
