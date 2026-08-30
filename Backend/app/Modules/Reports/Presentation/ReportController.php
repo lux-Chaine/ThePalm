@@ -3,11 +3,11 @@
 namespace App\Modules\Reports\Presentation;
 
 use App\Core\Bus\QueryBus;
+use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
 use App\Modules\Reports\Application\Queries\GetFinancialReportQuery;
 use App\Modules\Reports\Application\Queries\GetReservationReportQuery;
 use App\Modules\Reports\Application\Queries\GetOccupancyReportQuery;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class ReportController
 {
@@ -15,67 +15,70 @@ class ReportController
         protected QueryBus $queryBus
     ) {}
 
-    public function financial(Request $request): JsonResponse
+    public function financial(Request $request): array
     {
-        $validated = $request->validate([
+        $errors = $request->validate([
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'end_date' => 'required|date',
             'type' => 'sometimes|in:income,expense,profit'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $query = new GetFinancialReportQuery(
-            startDate: $validated['start_date'],
-            endDate: $validated['end_date'],
-            type: $validated['type'] ?? null
+            startDate: $request->get('start_date'),
+            endDate: $request->get('end_date'),
+            type: $request->get('type')
         );
 
         $report = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $report
-        ]);
+        return ResponseFormatter::item($report);
     }
 
-    public function reservations(Request $request): JsonResponse
+    public function reservations(Request $request): array
     {
-        $validated = $request->validate([
+        $errors = $request->validate([
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'end_date' => 'required|date',
             'status' => 'sometimes|in:pending,confirmed,checked_in,checked_out,cancelled'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $query = new GetReservationReportQuery(
-            startDate: $validated['start_date'],
-            endDate: $validated['end_date'],
-            status: $validated['status'] ?? null
+            startDate: $request->get('start_date'),
+            endDate: $request->get('end_date'),
+            status: $request->get('status')
         );
 
         $report = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $report
-        ]);
+        return ResponseFormatter::item($report);
     }
 
-    public function occupancy(Request $request): JsonResponse
+    public function occupancy(Request $request): array
     {
-        $validated = $request->validate([
+        $errors = $request->validate([
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date'
+            'end_date' => 'required|date'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $query = new GetOccupancyReportQuery(
-            startDate: $validated['start_date'],
-            endDate: $validated['end_date']
+            startDate: $request->get('start_date'),
+            endDate: $request->get('end_date')
         );
 
         $report = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $report
-        ]);
+        return ResponseFormatter::item($report);
     }
 }

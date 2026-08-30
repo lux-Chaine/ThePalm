@@ -2,9 +2,12 @@
 
 namespace App\Core\Http;
 
+use App\Core\Validation\Validator;
+
 class Request
 {
     protected array $data = [];
+    protected ?Validator $validator = null;
 
     public function __construct(array $data = [])
     {
@@ -31,28 +34,29 @@ class Request
         return isset($this->data[$key]);
     }
 
-    public function validate(array $rules): array
+    public function validate(array $rules, array $customMessages = []): array
     {
-        $errors = [];
-        foreach ($rules as $field => $rule) {
-            $ruleArray = is_array($rule) ? $rule : explode('|', $rule);
-            
-            foreach ($ruleArray as $r) {
-                if ($r === 'required' && !isset($this->data[$field])) {
-                    $errors[$field][] = "The $field field is required.";
-                }
-                if ($r === 'email' && isset($this->data[$field]) && !filter_var($this->data[$field], FILTER_VALIDATE_EMAIL)) {
-                    $errors[$field][] = "The $field must be a valid email address.";
-                }
-                if (str_starts_with($r, 'min:') && isset($this->data[$field])) {
-                    $min = (int) substr($r, 4);
-                    if (strlen($this->data[$field]) < $min) {
-                        $errors[$field][] = "The $field must be at least $min characters.";
-                    }
-                }
-            }
-        }
+        $this->validator = new Validator($this->data, $rules, $customMessages);
         
-        return $errors;
+        if (!$this->validator->validate()) {
+            return $this->validator->errors();
+        }
+
+        return [];
+    }
+
+    public function hasValidationErrors(): bool
+    {
+        return $this->validator ? $this->validator->hasErrors() : false;
+    }
+
+    public function validationErrors(): array
+    {
+        return $this->validator ? $this->validator->errors() : [];
+    }
+
+    public function firstValidationError(string $field): ?string
+    {
+        return $this->validator ? $this->validator->firstError($field) : null;
     }
 }

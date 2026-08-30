@@ -2,57 +2,136 @@
 
 namespace App\Core\Middleware;
 
-use App\Models\User;
-use Closure;
+use App\Core\Auth\JWT;
+use App\Core\Exceptions\UnauthorizedException;
+use App\Core\Exceptions\ForbiddenException;
 
 class PermissionMiddleware
 {
-    public function handle($request, Closure $next, string $permission)
+    /**
+     * Check if user has required permission
+     */
+    public static function check(string $requiredPermission): void
     {
-        // Get user from token (simplified version)
-        $token = $request->header('Authorization');
+        // First validate JWT token
+        $userData = JWTMiddleware::handle();
         
-        if (!$token) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Unauthorized - No token provided'
-            ], 401);
-        }
+        $userId = $userData['user_id'];
+        $role = $userData['role'];
 
-        // Parse token (simplified - in production use JWT)
-        $token = str_replace('Bearer ', '', $token);
-        $tokenData = explode(':', base64_decode($token));
+        // Role-based permission mapping
+        $rolePermissions = self::getRolePermissions();
+
+        $userPermissions = $rolePermissions[$role] ?? [];
+
+        if (!in_array($requiredPermission, $userPermissions) && !in_array('*', $userPermissions)) {
+            throw new ForbiddenException("Insufficient permissions. Required: {$requiredPermission}");
+        }
+    }
+
+    /**
+     * Get permissions by role
+     */
+    private static function getRolePermissions(): array
+    {
+        return [
+            'admin' => ['*'], // All permissions
+            'manager' => [
+                'users.view',
+                'users.manage',
+                'rooms.view',
+                'rooms.manage',
+                'reservations.view',
+                'reservations.manage',
+                'guests.view',
+                'guests.manage',
+                'invoices.manage',
+                'expenses.view',
+                'expenses.create',
+                'expenses.manage',
+                'reports.view',
+                'settings.manage',
+            ],
+            'receptionist' => [
+                'rooms.view',
+                'reservations.view',
+                'reservations.manage',
+                'guests.view',
+                'guests.manage',
+                'invoices.manage',
+            ],
+            'accountant' => [
+                'invoices.manage',
+                'expenses.view',
+                'expenses.create',
+                'expenses.manage',
+                'reports.view',
+            ],
+            'housekeeping' => [
+                'rooms.view',
+            ],
+        ];
+    }
+
+    /**
+     * Check if user has any of the given permissions
+     */
+    public static function hasAnyPermission(array $permissions): bool
+    {
+        $userData = JWTMiddleware::handle();
+        $role = $userData['role'];
         
-        if (count($tokenData) < 2) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Invalid token'
-            ], 401);
+        $rolePermissions = self::getRolePermissions();
+        $userPermissions = $rolePermissions[$role] ?? [];
+
+        // Admin has all permissions
+        if (in_array('*', $userPermissions)) {
+            return true;
         }
 
-        $userId = $tokenData[0];
-        $user = User::find($userId);
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'error' => 'User not found'
-            ], 401);
+        foreach ($permissions as $permission) {
+            if (in_array($permission, $userPermissions)) {
+                return true;
+            }
         }
 
-        // Check permission
-        if (!$user->hasPermission($permission)) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Forbidden - Insufficient permissions',
-                'required_permission' => $permission,
-                'user_permissions' => $user->getPermissions()
-            ], 403);
+        return false;
+    }
+
+    /**
+     * Check if user has all of the given permissions
+     */
+    public static function hasAllPermissions(array $permissions): bool
+    {
+        $userData = JWTMiddleware::handle();
+        $role = $userData['role'];
+        
+        $rolePermissions = self::getRolePermissions();
+        $userPermissions = $rolePermissions[$role] ?? [];
+
+        // Admin has all permissions
+        if (in_array('*', $userPermissions)) {
+            return true;
         }
 
-        // Add user to request for controllers
-        $request->merge(['auth_user' => $user]);
+        foreach ($permissions as $permission) {
+            if (!in_array($permission, $userPermissions)) {
+                return false;
+            }
+        }
 
-        return $next($request);
+        return true;
+    }
+
+    /**
+     * Get current user's permissions
+     */
+    public static function getUserPermissions(): array
+    {
+        $userData = JWTMiddleware::handle();
+        $role = $userData['role'];
+        
+        $rolePermissions = self::getRolePermissions();
+        return $rolePermissions[$role] ?? [];
     }
 }

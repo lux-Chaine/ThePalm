@@ -2,36 +2,29 @@
 
 namespace App\Modules\Guests\Domain;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Model;
-
-class Guest extends Model
+class Guest
 {
-    use HasFactory, SoftDeletes;
+    public ?int $id = null;
+    public string $name;
+    public ?string $email = null;
+    public string $phone;
+    public ?string $identityNumber = null;
+    public string $identityType = 'national_id';
+    public ?string $dateOfBirth = null;
+    public ?string $address = null;
+    public ?string $city = null;
+    public string $country = 'Egypt';
+    public ?string $notes = null;
+    public ?string $createdAt = null;
+    public ?string $updatedAt = null;
+    public ?int $totalReservations = 0;
+    public ?int $activeReservations = 0;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'identity_number',
-        'identity_type',
-        'date_of_birth',
-        'address',
-        'city',
-        'country',
-        'notes',
-    ];
-
-    protected $casts = [
-        'date_of_birth' => 'date',
-    ];
-
-    // Relationships
-    public function reservations(): HasMany
+    public function __construct(array $data = [])
     {
-        return $this->hasMany(\App\Modules\Reservations\Domain\Reservation::class);
+        foreach ($data as $key => $value) {
+            $this->{$key} = $value;
+        }
     }
 
     // Domain methods
@@ -51,8 +44,8 @@ class Guest extends Model
     public function getIdentityInfo(): array
     {
         return [
-            'identity_number' => $this->identity_number,
-            'identity_type' => $this->identity_type,
+            'identity_number' => $this->identityNumber,
+            'identity_type' => $this->identityType,
         ];
     }
 
@@ -65,18 +58,6 @@ class Guest extends Model
         ];
     }
 
-    public function getTotalReservations(): int
-    {
-        return $this->reservations()->count();
-    }
-
-    public function getActiveReservations(): int
-    {
-        return $this->reservations()
-            ->whereIn('status', ['confirmed', 'checked_in'])
-            ->count();
-    }
-
     public function toArray(): array
     {
         return [
@@ -84,17 +65,17 @@ class Guest extends Model
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'identity_number' => $this->identity_number,
-            'identity_type' => $this->identity_type,
-            'date_of_birth' => $this->date_of_birth?->format('Y-m-d'),
+            'identity_number' => $this->identityNumber,
+            'identity_type' => $this->identityType,
+            'date_of_birth' => $this->dateOfBirth,
             'address' => $this->address,
             'city' => $this->city,
             'country' => $this->country,
             'notes' => $this->notes,
-            'total_reservations' => $this->getTotalReservations(),
-            'active_reservations' => $this->getActiveReservations(),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'total_reservations' => $this->totalReservations ?? 0,
+            'active_reservations' => $this->activeReservations ?? 0,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

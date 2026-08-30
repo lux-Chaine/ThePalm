@@ -4,12 +4,13 @@ namespace App\Modules\Accounting\Presentation;
 
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
+use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
+use App\Core\Validation\Requests\CreateExpenseRequest;
 use App\Modules\Accounting\Application\Commands\CreateExpenseCommand;
 use App\Modules\Accounting\Application\Commands\UpdateExpenseStatusCommand;
 use App\Modules\Accounting\Application\Queries\GetExpenseByIdQuery;
 use App\Modules\Accounting\Application\Queries\GetAllExpensesQuery;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class ExpenseController
 {
@@ -18,7 +19,7 @@ class ExpenseController
         protected QueryBus $queryBus
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): array
     {
         $query = new GetAllExpensesQuery(
             category: $request->get('category'),
@@ -31,78 +32,65 @@ class ExpenseController
 
         $expenses = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $expenses
-        ]);
+        return ResponseFormatter::collection($expenses);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): array
     {
         $query = new GetExpenseByIdQuery($id);
         $expense = $this->queryBus->dispatch($query);
 
         if (!$expense) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Expense not found'
-            ], 404);
+            return ResponseFormatter::notFound('Expense', $id);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $expense
-        ]);
+        return ResponseFormatter::item($expense->toArray());
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): array
     {
-        $validated = $request->validate([
-            'created_by' => 'required|integer|exists:users,id',
-            'category' => 'required|in:salaries,utilities,insurance,maintenance,supplies,cleaning,food_beverage,marketing,laundry,other',
-            'description' => 'required|string',
-            'amount' => 'required|numeric|min:0',
-            'expense_date' => 'required|date',
-            'receipt_url' => 'sometimes|url',
-            'notes' => 'sometimes|string'
-        ]);
+        $formRequest = new CreateExpenseRequest($request);
+        
+        if (!$formRequest->validate()) {
+            return ResponseFormatter::validationError($formRequest->allErrors());
+        }
+
+        $validated = $formRequest->getRequest()->all();
 
         $command = new CreateExpenseCommand(
             createdBy: $validated['created_by'],
             category: $validated['category'],
             description: $validated['description'],
             amount: $validated['amount'],
-            expenseDate: $validated['expense_date'],
-            receiptUrl: $validated['receipt_url'] ?? null,
+            expenseDate: $validated['expense_date'] ?? null,
+            status: $validated['status'] ?? 'pending',
             notes: $validated['notes'] ?? null
         );
 
         $expense = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $expense->toArray()
-        ], 201);
+        return ResponseFormatter::created($expense->toArray());
     }
 
-    public function updateStatus(Request $request, int $id): JsonResponse
+    public function updateStatus(Request $request, int $id): array
     {
-        $validated = $request->validate([
+        $errors = $request->validate([
             'status' => 'required|in:pending,approved,rejected,paid',
             'rejection_reason' => 'sometimes|string'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $command = new UpdateExpenseStatusCommand(
             expenseId: $id,
-            status: $validated['status'],
-            rejectionReason: $validated['rejection_reason'] ?? null
+            status: $request->get('status'),
+            rejectionReason: $request->get('rejection_reason')
         );
 
         $expense = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $expense->toArray()
-        ]);
+        return ResponseFormatter::updated($expense->toArray());
     }
 }

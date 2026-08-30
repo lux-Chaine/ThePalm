@@ -5,6 +5,7 @@ namespace App\Modules\Settings\Presentation;
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
 use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
 use App\Modules\Settings\Application\Commands\UpdateSettingCommand;
 use App\Modules\Settings\Application\Queries\GetAllSettingsQuery;
 use App\Modules\Settings\Application\Queries\GetSettingByKeyQuery;
@@ -24,10 +25,7 @@ class SettingController
 
         $settings = $this->queryBus->dispatch($query);
 
-        return [
-            'success' => true,
-            'data' => $settings
-        ];
+        return ResponseFormatter::collection($settings);
     }
 
     public function show(string $key): array
@@ -36,16 +34,10 @@ class SettingController
         $setting = $this->queryBus->dispatch($query);
 
         if (!$setting) {
-            return [
-                'success' => false,
-                'error' => 'Setting not found'
-            ];
+            return ResponseFormatter::notFound('Setting', $key);
         }
 
-        return [
-            'success' => true,
-            'data' => $setting
-        ];
+        return ResponseFormatter::item($setting);
     }
 
     public function update(Request $request, string $key): array
@@ -57,9 +49,10 @@ class SettingController
 
         $result = $this->commandBus->dispatch($command);
 
-        return [
-            'success' => $result,
-            'message' => $result ? 'Setting updated successfully' : 'Failed to update setting'
-        ];
+        if ($result) {
+            return ResponseFormatter::updated($result, 'Setting updated successfully');
+        }
+
+        return ResponseFormatter::error('Failed to update setting', 'update_failed', 500);
     }
 }

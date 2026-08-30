@@ -6,7 +6,6 @@ use App\Core\Bus\CommandHandlerInterface;
 use App\Core\Database\UnitOfWorkInterface;
 use App\Modules\Identity\Domain\User;
 use App\Modules\Identity\Domain\UserRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
 use Exception;
 
 class UpdateUserCommandHandler implements CommandHandlerInterface
@@ -28,7 +27,7 @@ class UpdateUserCommandHandler implements CommandHandlerInterface
             $data = array_filter([
                 'name' => $command->name,
                 'email' => $command->email,
-                'password' => $command->password ? Hash::make($command->password) : null,
+                'password' => $command->password ? password_hash($command->password, PASSWORD_BCRYPT) : null,
                 'role' => $command->role,
                 'user_type' => $command->userType,
             ], fn($value) => $value !== null);

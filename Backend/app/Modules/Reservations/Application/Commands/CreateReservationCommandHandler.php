@@ -41,14 +41,14 @@ class CreateReservationCommandHandler implements CommandHandlerInterface
             $checkIn = new \DateTime($command->checkInDate);
             $checkOut = new \DateTime($command->checkOutDate);
             $duration = $checkIn->diff($checkOut)->days;
-            $totalAmount = $room->price_per_night * $duration;
+            $totalAmount = $room->pricePerNight * $duration;
 
             $data = [
                 'guest_id' => $command->guestId,
                 'room_id' => $command->roomId,
                 'user_id' => $command->userId,
-                'check_in' => $command->checkInDate,
-                'check_out' => $command->checkOutDate,
+                'check_in_date' => $command->checkInDate,
+                'check_out_date' => $command->checkOutDate,
                 'number_of_guests' => $command->numberOfGuests,
                 'special_requests' => $command->specialRequests,
                 'total_amount' => $totalAmount,

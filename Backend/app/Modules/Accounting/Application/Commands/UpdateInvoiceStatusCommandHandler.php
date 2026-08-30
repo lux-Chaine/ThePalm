@@ -27,7 +27,7 @@ class UpdateInvoiceStatusCommandHandler implements CommandHandlerInterface
             $data = ['payment_status' => $command->paymentStatus];
 
             if ($command->paymentAmount) {
-                $newPaidAmount = $invoice->paid_amount + $command->paymentAmount;
+                $newPaidAmount = $invoice->paidAmount + $command->paymentAmount;
                 $data['paid_amount'] = $newPaidAmount;
 
                 if ($newPaidAmount >= $invoice->amount) {

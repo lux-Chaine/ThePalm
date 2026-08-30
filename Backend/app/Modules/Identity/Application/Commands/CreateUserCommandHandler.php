@@ -6,7 +6,6 @@ use App\Core\Bus\CommandHandlerInterface;
 use App\Core\Database\UnitOfWorkInterface;
 use App\Modules\Identity\Domain\User;
 use App\Modules\Identity\Domain\UserRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
 
 class CreateUserCommandHandler implements CommandHandlerInterface
 {
@@ -21,7 +20,7 @@ class CreateUserCommandHandler implements CommandHandlerInterface
             $data = [
                 'name' => $command->name,
                 'email' => $command->email,
-                'password' => Hash::make($command->password),
+                'password' => password_hash($command->password, PASSWORD_BCRYPT),
                 'role' => $command->role,
                 'user_type' => $command->userType,
             ];

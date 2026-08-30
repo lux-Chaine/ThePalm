@@ -4,12 +4,12 @@ namespace App\Modules\Rooms\Presentation;
 
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
+use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
 use App\Modules\Rooms\Application\Commands\CreateRoomCommand;
 use App\Modules\Rooms\Application\Commands\UpdateRoomCommand;
 use App\Modules\Rooms\Application\Queries\GetRoomByIdQuery;
 use App\Modules\Rooms\Application\Queries\GetAllRoomsQuery;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class RoomController
 {
@@ -18,7 +18,7 @@ class RoomController
         protected QueryBus $queryBus
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): array
     {
         $query = new GetAllRoomsQuery(
             type: $request->get('type'),
@@ -31,34 +31,25 @@ class RoomController
 
         $rooms = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $rooms
-        ]);
+        return ResponseFormatter::collection($rooms);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): array
     {
         $query = new GetRoomByIdQuery($id);
         $room = $this->queryBus->dispatch($query);
 
         if (!$room) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Room not found'
-            ], 404);
+            return ResponseFormatter::notFound('Room', $id);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $room
-        ]);
+        return ResponseFormatter::item($room->toArray());
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): array
     {
-        $validated = $request->validate([
-            'room_number' => 'required|string|unique:rooms,room_number',
+        $errors = $request->validate([
+            'room_number' => 'required|string',
             'type' => 'required|in:single,double,suite,deluxe,presidential',
             'price_per_night' => 'required|numeric|min:0',
             'floor' => 'sometimes|integer|min:1',
@@ -67,28 +58,29 @@ class RoomController
             'amenities' => 'sometimes|array'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $command = new CreateRoomCommand(
-            roomNumber: $validated['room_number'],
-            type: $validated['type'],
-            pricePerNight: $validated['price_per_night'],
-            floor: $validated['floor'] ?? 1,
-            capacity: $validated['capacity'] ?? 2,
-            description: $validated['description'] ?? null,
-            amenities: $validated['amenities'] ?? null
+            roomNumber: $request->get('room_number'),
+            type: $request->get('type'),
+            pricePerNight: $request->get('price_per_night'),
+            floor: $request->get('floor') ?? 1,
+            capacity: $request->get('capacity') ?? 2,
+            description: $request->get('description'),
+            amenities: $request->get('amenities')
         );
 
         $room = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $room->toArray()
-        ], 201);
+        return ResponseFormatter::created($room->toArray());
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id): array
     {
-        $validated = $request->validate([
-            'room_number' => 'sometimes|string|unique:rooms,room_number,' . $id,
+        $errors = $request->validate([
+            'room_number' => 'sometimes|string',
             'type' => 'sometimes|in:single,double,suite,deluxe,presidential',
             'price_per_night' => 'sometimes|numeric|min:0',
             'status' => 'sometimes|in:available,booked,cleaning,maintenance',
@@ -98,23 +90,24 @@ class RoomController
             'amenities' => 'sometimes|array'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $command = new UpdateRoomCommand(
             roomId: $id,
-            roomNumber: $validated['room_number'] ?? null,
-            type: $validated['type'] ?? null,
-            pricePerNight: $validated['price_per_night'] ?? null,
-            status: $validated['status'] ?? null,
-            floor: $validated['floor'] ?? null,
-            capacity: $validated['capacity'] ?? null,
-            description: $validated['description'] ?? null,
-            amenities: $validated['amenities'] ?? null
+            roomNumber: $request->get('room_number'),
+            type: $request->get('type'),
+            pricePerNight: $request->get('price_per_night'),
+            status: $request->get('status'),
+            floor: $request->get('floor'),
+            capacity: $request->get('capacity'),
+            description: $request->get('description'),
+            amenities: $request->get('amenities')
         );
 
         $room = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $room->toArray()
-        ]);
+        return ResponseFormatter::updated($room->toArray());
     }
 }

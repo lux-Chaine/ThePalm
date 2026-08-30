@@ -79,6 +79,16 @@ if (strpos($requestUri,'/api/v1/') === 0) {
         require_once __DIR__ . '/app/Core/Bus/CommandHandlerInterface.php';
         require_once __DIR__ . '/app/Core/Bus/QueryHandlerInterface.php';
         
+        // Load exception handlers
+        require_once __DIR__ . '/app/Core/Exceptions/GlobalExceptionHandler.php';
+        require_once __DIR__ . '/app/Core/Exceptions/ValidationException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/NotFoundException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/UnauthorizedException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/ForbiddenException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/BadRequestException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/BusinessRuleException.php';
+        require_once __DIR__ . '/app/Core/Exceptions/ConflictException.php';
+        
         $commandBus = new App\Core\Bus\CommandBus();
         $queryBus = new App\Core\Bus\QueryBus();
         
@@ -135,9 +145,10 @@ if (strpos($requestUri,'/api/v1/') === 0) {
                 http_response_code(404);
                 echo json_encode(['error' => 'Module not found']);
         }
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['error' => $e->getMessage()]);
+    } catch (Throwable $e) {
+        $errorResponse = App\Core\Exceptions\GlobalExceptionHandler::handleWithLogging($e);
+        http_response_code($errorResponse['status_code'] ?? 500);
+        echo json_encode($errorResponse);
     }
 } else {
     echo json_encode(['message' => 'Palm API - Use /api/v1/ endpoints']);
@@ -146,38 +157,22 @@ if (strpos($requestUri,'/api/v1/') === 0) {
 // Permission checking function
 function checkPermission(string $requiredPermission): bool
 {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
-    
-    if (!$token) {
-        return false;
+    try {
+        // Load middleware classes
+        require_once __DIR__ . '/app/Core/Middleware/JWTMiddleware.php';
+        require_once __DIR__ . '/app/Core/Middleware/PermissionMiddleware.php';
+        
+        App\Core\Middleware\PermissionMiddleware::check($requiredPermission);
+        return true;
+    } catch (App\Core\Exceptions\UnauthorizedException $e) {
+        http_response_code(401);
+        echo json_encode(['error' => $e->getMessage()]);
+        exit;
+    } catch (App\Core\Exceptions\ForbiddenException $e) {
+        http_response_code(403);
+        echo json_encode(['error' => $e->getMessage()]);
+        exit;
     }
-    
-    $token = str_replace('Bearer ', '', $token);
-    
-    // Load JWT class
-    require_once __DIR__ . '/app/Core/Auth/JWT.php';
-    
-    $payload = \App\Core\Auth\JWT::decode($token);
-    
-    if (!$payload) {
-        return false;
-    }
-    
-    $userId = $payload['sub'] ?? null;
-    
-    if (!$userId) {
-        return false;
-    }
-    
-    // Load User model and check permission
-    require_once __DIR__ . '/app/Models/User.php';
-    $user = \App\Models\User::find($userId);
-    
-    if (!$user) {
-        return false;
-    }
-    
-    return $user->hasPermission($requiredPermission);
 }
 
 // Helper functions for handling requests
@@ -279,7 +274,8 @@ function handleRoomRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
-                echo json_encode($controller->index());
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->index($request));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -287,13 +283,15 @@ function handleRoomRequest($controller, $method, $action, $id) {
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->store($data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->store($request));
             }
             break;
         case 'PUT':
             if ($id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->update($id, $data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->update($request, $id));
             }
             break;
     }
@@ -324,7 +322,8 @@ function handleReservationRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
-                echo json_encode($controller->index());
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->index($request));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -332,13 +331,15 @@ function handleReservationRequest($controller, $method, $action, $id) {
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->store($data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->store($request));
             }
             break;
         case 'PUT':
             if ($action === 'status' && $id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->updateStatus($id, $data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->updateStatus($request, $id));
             }
             break;
     }
@@ -369,7 +370,8 @@ function handleInvoiceRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
-                echo json_encode($controller->index());
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->index($request));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -377,13 +379,15 @@ function handleInvoiceRequest($controller, $method, $action, $id) {
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->store($data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->store($request));
             }
             break;
         case 'PUT':
             if ($action === 'payment' && $id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->updatePayment($id, $data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->updatePayment($request, $id));
             }
             break;
     }
@@ -414,7 +418,8 @@ function handleExpenseRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
-                echo json_encode($controller->index());
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->index($request));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -422,13 +427,15 @@ function handleExpenseRequest($controller, $method, $action, $id) {
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->store($data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->store($request));
             }
             break;
         case 'PUT':
             if ($action === 'status' && $id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->updateStatus($id, $data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->updateStatus($request, $id));
             }
             break;
     }
@@ -465,10 +472,11 @@ function handleGuestRequest($controller, $method, $action, $id) {
     switch ($method) {
         case 'GET':
             if ($action === '' || $action === 'index') {
-                echo json_encode($controller->index());
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->index($request));
             } elseif ($action === 'search') {
-                $data = $_GET;
-                echo json_encode($controller->search($data));
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->search($request));
             } elseif ($id) {
                 echo json_encode($controller->show($id));
             }
@@ -476,13 +484,15 @@ function handleGuestRequest($controller, $method, $action, $id) {
         case 'POST':
             if ($action === '' || $action === 'store') {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->store($data));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->store($request));
             }
             break;
         case 'PUT':
             if ($id) {
                 $data = json_decode(file_get_contents('php://input'), true);
-                echo json_encode($controller->update($data, $id));
+                $request = new App\Core\Http\Request($data);
+                echo json_encode($controller->update($request, $id));
             }
             break;
         case 'DELETE':
@@ -504,14 +514,14 @@ function handleReportRequest($controller, $method, $action) {
     switch ($method) {
         case 'GET':
             if ($action === 'financial') {
-                $data = $_GET;
-                echo json_encode($controller->financial($data));
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->financial($request));
             } elseif ($action === 'reservations') {
-                $data = $_GET;
-                echo json_encode($controller->reservations($data));
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->reservations($request));
             } elseif ($action === 'occupancy') {
-                $data = $_GET;
-                echo json_encode($controller->occupancy($data));
+                $request = new App\Core\Http\Request($_GET);
+                echo json_encode($controller->occupancy($request));
             }
             break;
     }

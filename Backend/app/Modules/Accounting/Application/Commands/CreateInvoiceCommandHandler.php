@@ -19,7 +19,6 @@ class CreateInvoiceCommandHandler implements CommandHandlerInterface
     {
         return $this->unitOfWork->executeInTransaction(function () use ($command) {
             $data = [
-                'invoice_number' => Invoice::generateInvoiceNumber(),
                 'reservation_id' => $command->reservationId,
                 'created_by' => $command->createdBy,
                 'amount' => $command->amount,

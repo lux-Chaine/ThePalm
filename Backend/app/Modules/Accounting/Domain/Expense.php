@@ -2,53 +2,66 @@
 
 namespace App\Modules\Accounting\Domain;
 
-use App\Models\Expense as EloquentExpense;
-
-class Expense extends EloquentExpense
+class Expense
 {
+    public ?int $id = null;
+    public int $createdBy;
+    public string $category;
+    public string $description;
+    public float $amount;
+    public ?string $expenseDate = null;
+    public string $status = 'pending';
+    public ?string $receiptUrl = null;
+    public ?string $notes = null;
+    public ?string $rejectionReason = null;
+    public ?string $createdAt = null;
+    public ?string $updatedAt = null;
+
+    public function __construct(array $data = [])
+    {
+        foreach ($data as $key => $value) {
+            $this->{$key} = $value;
+        }
+    }
+
     // Domain-specific methods for Accounting Module
     public function isRecurring(): bool
     {
-        // Check if this is a recurring expense (salaries, utilities, etc.)
         return in_array($this->category, ['salaries', 'utilities', 'insurance']);
     }
 
     public function isCapitalExpense(): bool
     {
-        // Check if this is a capital expenditure (large investments)
         return $this->amount >= 10000;
     }
 
     public function requiresApproval(): bool
     {
-        // Expenses over 1000 require approval
         return $this->amount >= 1000;
     }
 
     public function canBeApproved(): bool
     {
-        return $this->isPending() && $this->requiresApproval();
+        return $this->status === 'pending' && $this->requiresApproval();
     }
 
     public function getTaxDeductibleAmount(): float
     {
-        // Calculate tax-deductible portion based on category
         $deductibleCategories = ['maintenance', 'supplies', 'utilities', 'insurance'];
         
         if (in_array($this->category, $deductibleCategories)) {
-            return $this->amount; // Fully deductible
+            return $this->amount;
         }
 
         if ($this->category === 'marketing') {
-            return $this->amount * 0.50; // 50% deductible
+            return $this->amount * 0.50;
         }
 
-        return 0; // Not deductible
+        return 0;
     }
 
     public function getCategoryPriority(): int
     {
-        // Priority for payment: higher priority = should be paid first
         return match($this->category) {
             'salaries' => 1,
             'utilities' => 2,
@@ -78,7 +91,24 @@ class Expense extends EloquentExpense
 
     public function canBeReimbursed(): bool
     {
-        // Check if expense can be reimbursed to employee
         return in_array($this->category, ['supplies', 'maintenance', 'cleaning']);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'created_by' => $this->createdBy,
+            'category' => $this->category,
+            'description' => $this->description,
+            'amount' => $this->amount,
+            'expense_date' => $this->expenseDate,
+            'status' => $this->status,
+            'receipt_url' => $this->receiptUrl,
+            'notes' => $this->notes,
+            'rejection_reason' => $this->rejectionReason,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
+        ];
     }
 }

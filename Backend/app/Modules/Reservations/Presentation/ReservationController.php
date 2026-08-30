@@ -4,12 +4,13 @@ namespace App\Modules\Reservations\Presentation;
 
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
+use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
+use App\Core\Validation\Requests\CreateReservationRequest;
 use App\Modules\Reservations\Application\Commands\CreateReservationCommand;
 use App\Modules\Reservations\Application\Commands\UpdateReservationStatusCommand;
 use App\Modules\Reservations\Application\Queries\GetReservationByIdQuery;
 use App\Modules\Reservations\Application\Queries\GetAllReservationsQuery;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class ReservationController
 {
@@ -18,7 +19,7 @@ class ReservationController
         protected QueryBus $queryBus
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): array
     {
         $query = new GetAllReservationsQuery(
             guestId: $request->get('guest_id'),
@@ -33,78 +34,65 @@ class ReservationController
 
         $reservations = $this->queryBus->dispatch($query);
 
-        return response()->json([
-            'success' => true,
-            'data' => $reservations
-        ]);
+        return ResponseFormatter::collection($reservations);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): array
     {
         $query = new GetReservationByIdQuery($id);
         $reservation = $this->queryBus->dispatch($query);
 
         if (!$reservation) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Reservation not found'
-            ], 404);
+            return ResponseFormatter::notFound('Reservation', $id);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $reservation
-        ]);
+        return ResponseFormatter::item($reservation->toArray());
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): array
     {
-        $validated = $request->validate([
-            'guest_id' => 'required|integer|exists:guests,id',
-            'room_id' => 'required|integer|exists:rooms,id',
-            'user_id' => 'required|integer|exists:users,id',
-            'check_in' => 'required|date|after:today',
-            'check_out' => 'required|date|after:check_in',
-            'number_of_guests' => 'sometimes|integer|min:1',
-            'special_requests' => 'sometimes|string'
-        ]);
+        $formRequest = new CreateReservationRequest($request);
+        
+        if (!$formRequest->validate()) {
+            return ResponseFormatter::validationError($formRequest->allErrors());
+        }
+
+        $validated = $formRequest->getRequest()->all();
 
         $command = new CreateReservationCommand(
             guestId: $validated['guest_id'],
             roomId: $validated['room_id'],
             userId: $validated['user_id'],
-            checkInDate: $validated['check_in'],
-            checkOutDate: $validated['check_out'],
+            checkInDate: $validated['check_in_date'],
+            checkOutDate: $validated['check_out_date'],
             numberOfGuests: $validated['number_of_guests'] ?? 1,
             specialRequests: $validated['special_requests'] ?? null
         );
 
         $reservation = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $reservation->toArray()
-        ], 201);
+        return ResponseFormatter::created($reservation->toArray());
     }
 
-    public function updateStatus(Request $request, int $id): JsonResponse
+    public function updateStatus(Request $request, int $id): array
     {
-        $validated = $request->validate([
+        $errors = $request->validate([
             'status' => 'required|in:pending,confirmed,checked_in,checked_out,cancelled',
             'cancellation_reason' => 'sometimes|string'
         ]);
 
+        if (!empty($errors)) {
+            return ResponseFormatter::validationError($errors);
+        }
+
         $command = new UpdateReservationStatusCommand(
             reservationId: $id,
-            status: $validated['status'],
-            cancellationReason: $validated['cancellation_reason'] ?? null
+            status: $request->get('status'),
+            cancellationReason: $request->get('cancellation_reason')
         );
 
         $reservation = $this->commandBus->dispatch($command);
 
-        return response()->json([
-            'success' => true,
-            'data' => $reservation->toArray()
-        ]);
+        return ResponseFormatter::updated($reservation->toArray());
     }
 }

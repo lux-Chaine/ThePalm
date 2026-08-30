@@ -36,7 +36,7 @@ class UpdateReservationStatusCommandHandler implements CommandHandlerInterface
 
             // Update room status based on reservation status
             if ($command->status === 'cancelled' || $command->status === 'completed') {
-                $room = $this->roomRepository->findById($reservation->room_id);
+                $room = $this->roomRepository->findById($reservation->roomId);
                 if ($room) {
                     $this->roomRepository->update($room, ['status' => 'available']);
                 }

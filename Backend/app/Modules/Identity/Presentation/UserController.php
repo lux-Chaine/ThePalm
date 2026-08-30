@@ -5,6 +5,7 @@ namespace App\Modules\Identity\Presentation;
 use App\Core\Bus\CommandBus;
 use App\Core\Bus\QueryBus;
 use App\Core\Http\Request;
+use App\Core\Http\ResponseFormatter;
 use App\Modules\Identity\Application\Commands\CreateUserCommand;
 use App\Modules\Identity\Application\Commands\UpdateUserCommand;
 use App\Modules\Identity\Application\Commands\DeleteUserCommand;
@@ -28,10 +29,7 @@ class UserController
         $query = new GetAllUsersQuery();
         $users = $this->queryBus->dispatch($query);
 
-        return [
-            'success' => true,
-            'data' => $users
-        ];
+        return ResponseFormatter::collection($users);
     }
 
     public function show(string $id): array
@@ -40,48 +38,33 @@ class UserController
         $user = $this->queryBus->dispatch($query);
 
         if (!$user) {
-            return [
-                'success' => false,
-                'error' => 'User not found'
-            ];
+            return ResponseFormatter::notFound('User', $id);
         }
 
-        return [
-            'success' => true,
-            'data' => $user
-        ];
+        return ResponseFormatter::item($user);
     }
 
     public function store(Request $request): array
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'role' => 'required'
-        ]);
-
-        if (!empty($validated)) {
-            return [
-                'success' => false,
-                'errors' => $validated
-            ];
+        $formRequest = new App\Core\Validation\Requests\CreateUserRequest($request);
+        
+        if (!$formRequest->validate()) {
+            return ResponseFormatter::validationError($formRequest->allErrors());
         }
 
+        $validated = $formRequest->getRequest()->all();
+
         $command = new CreateUserCommand(
-            name: $request->get('name'),
-            email: $request->get('email'),
-            password: $request->get('password'),
-            role: $request->get('role'),
-            userType: $request->get('user_type', 'staff')
+            name: $validated['name'],
+            email: $validated['email'],
+            password: $validated['password'],
+            role: $validated['role'],
+            userType: $validated['user_type'] ?? 'staff'
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return [
-            'success' => true,
-            'data' => $result
-        ];
+        return ResponseFormatter::created($result);
     }
 
     public function update(Request $request, string $id): array
@@ -97,10 +80,7 @@ class UserController
 
         $result = $this->commandBus->dispatch($command);
 
-        return [
-            'success' => true,
-            'data' => $result
-        ];
+        return ResponseFormatter::updated($result);
     }
 
     public function destroy(string $id): array
@@ -108,37 +88,27 @@ class UserController
         $command = new DeleteUserCommand($id);
         $this->commandBus->dispatch($command);
 
-        return [
-            'success' => true,
-            'message' => 'User deleted successfully'
-        ];
+        return ResponseFormatter::deleted();
     }
 
     public function login(Request $request): array
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        if (!empty($validated)) {
-            return [
-                'success' => false,
-                'errors' => $validated
-            ];
+        $formRequest = new App\Core\Validation\Requests\LoginRequest($request);
+        
+        if (!$formRequest->validate()) {
+            return ResponseFormatter::validationError($formRequest->allErrors());
         }
 
+        $validated = $formRequest->getRequest()->all();
+
         $command = new LoginCommand(
-            email: $request->get('email'),
-            password: $request->get('password')
+            email: $validated['email'],
+            password: $validated['password']
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return [
-            'success' => true,
-            'data' => $result
-        ];
+        return ResponseFormatter::success($result, 'Login successful');
     }
 
     public function refreshToken(Request $request): array
@@ -149,10 +119,7 @@ class UserController
 
         $result = $this->commandBus->dispatch($command);
 
-        return [
-            'success' => true,
-            'data' => $result
-        ];
+        return ResponseFormatter::success($result, 'Token refreshed successfully');
     }
 
     public function getRoles(): array
@@ -160,10 +127,7 @@ class UserController
         $query = new GetAllRolesQuery();
         $roles = $this->queryBus->dispatch($query);
 
-        return [
-            'success' => true,
-            'data' => $roles
-        ];
+        return ResponseFormatter::collection($roles);
     }
 
     public function getUserPermissions(string $id): array
@@ -171,9 +135,6 @@ class UserController
         $query = new GetUserPermissionsQuery($id);
         $permissions = $this->queryBus->dispatch($query);
 
-        return [
-            'success' => true,
-            'data' => $permissions
-        ];
+        return ResponseFormatter::item($permissions);
     }
 }

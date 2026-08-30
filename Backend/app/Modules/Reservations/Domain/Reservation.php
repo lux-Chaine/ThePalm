@@ -2,10 +2,29 @@
 
 namespace App\Modules\Reservations\Domain;
 
-use App\Models\Reservation as EloquentReservation;
-
-class Reservation extends EloquentReservation
+class Reservation
 {
+    public ?int $id = null;
+    public int $guestId;
+    public int $roomId;
+    public int $userId;
+    public string $checkInDate;
+    public string $checkOutDate;
+    public int $numberOfGuests = 1;
+    public ?string $specialRequests = null;
+    public string $status = 'pending';
+    public ?string $cancellationReason = null;
+    public ?float $totalAmount = null;
+    public ?string $createdAt = null;
+    public ?string $updatedAt = null;
+
+    public function __construct(array $data = [])
+    {
+        foreach ($data as $key => $value) {
+            $this->{$key} = $value;
+        }
+    }
+
     // Domain-specific methods for Reservations Module
     public function canBeModified(): bool
     {
@@ -14,22 +33,24 @@ class Reservation extends EloquentReservation
 
     public function canBeCancelled(): bool
     {
-        return $this->canBeModified() && $this->check_in_date->isFuture();
+        return $this->canBeModified() && !$this->isPastCheckIn();
     }
 
     public function isPastCheckIn(): bool
     {
-        return $this->check_in_date->isPast();
+        return strtotime($this->checkInDate) < time();
     }
 
     public function isPastCheckOut(): bool
     {
-        return $this->check_out_date->isPast();
+        return strtotime($this->checkOutDate) < time();
     }
 
     public function getDuration(): int
     {
-        return $this->check_in_date->diffInDays($this->check_out_date);
+        $checkIn = new \DateTime($this->checkInDate);
+        $checkOut = new \DateTime($this->checkOutDate);
+        return (int) $checkIn->diff($checkOut)->days;
     }
 
     public function calculateTotalAmount(float $roomPrice): float
@@ -39,34 +60,51 @@ class Reservation extends EloquentReservation
 
     public function isOverlappingWith(Reservation $other): bool
     {
-        return ($this->check_in_date < $other->check_out_date && 
-                $this->check_out_date > $other->check_in_date);
+        return (strtotime($this->checkInDate) < strtotime($other->checkOutDate) && 
+                strtotime($this->checkOutDate) > strtotime($other->checkInDate));
     }
 
     public function requiresDeposit(): bool
     {
-        // Business rule: reservations over 3 nights require deposit
         return $this->getDuration() > 3;
     }
 
     public function getDepositAmount(): float
     {
-        if (!$this->requiresDeposit()) {
+        if (!$this->requiresDeposit() || !$this->totalAmount) {
             return 0;
         }
         
-        // 20% of total amount as deposit
-        return $this->total_amount * 0.20;
+        return $this->totalAmount * 0.20;
     }
 
     public function getConfirmationDeadline(): \DateTime
     {
-        // Reservation must be confirmed 24 hours before check-in
-        return $this->check_in_date->subHours(24);
+        $checkIn = new \DateTime($this->checkInDate);
+        return $checkIn->sub(new \DateInterval('PT24H'));
     }
 
     public function isPastConfirmationDeadline(): bool
     {
-        return now()->isAfter($this->getConfirmationDeadline());
+        return new \DateTime() > $this->getConfirmationDeadline();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'guest_id' => $this->guestId,
+            'room_id' => $this->roomId,
+            'user_id' => $this->userId,
+            'check_in_date' => $this->checkInDate,
+            'check_out_date' => $this->checkOutDate,
+            'number_of_guests' => $this->numberOfGuests,
+            'special_requests' => $this->specialRequests,
+            'status' => $this->status,
+            'cancellation_reason' => $this->cancellationReason,
+            'total_amount' => $this->totalAmount,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
+        ];
     }
 }
