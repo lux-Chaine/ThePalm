@@ -44,6 +44,16 @@
 </div>
 
 <style>
+  :global(:root) {
+    --green-deep: #16332A;
+    --green-darker: #0f251e;
+    --green-emerald: #1e4539;
+    --gold: #B8934A;
+    --gold-light: #D8BD86;
+    --sand: #F1EAD9;
+    --sand-light: #FAF6EE;
+  }
+
   :global(*) {
     margin: 0;
     padding: 0;
