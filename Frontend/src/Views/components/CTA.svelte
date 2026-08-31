@@ -108,4 +108,21 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 540px) {
+    .cta-banner {
+      padding: 70px 6vw;
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 7vw, 2.4rem);
+      margin-bottom: 28px;
+    }
+
+    .contact-row {
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+  }
 </style>

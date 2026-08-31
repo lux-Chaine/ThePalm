@@ -125,6 +125,7 @@
   @media (max-width: 900px) {
     .reception-grid {
       grid-template-columns: 1fr;
+      gap: 40px;
     }
     .reception-photos {
       height: auto;
@@ -139,6 +140,19 @@
     }
     section {
       padding: 80px 6vw;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .reception-photos {
+      grid-template-columns: 1fr;
+    }
+    .reception-photos a:first-child {
+      grid-row: auto;
+    }
+    .info-list {
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
   }
 </style>

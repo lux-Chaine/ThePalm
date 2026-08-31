@@ -216,4 +216,35 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 600px) {
+    .nearby-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .distance-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .distance-row span:last-child {
+      grid-column: 1 / -1;
+      text-align: left;
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    .distance-head span:last-child {
+      display: none;
+    }
+
+    .facilities-row {
+      gap: 10px;
+    }
+
+    .facility-pill {
+      padding: 10px 16px;
+      font-size: 0.8rem;
+    }
+  }
 </style>

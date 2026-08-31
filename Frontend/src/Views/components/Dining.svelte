@@ -199,4 +199,19 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 480px) {
+    .dining-gallery {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .dining-gallery img {
+      height: 160px;
+    }
+
+    .outlet-meta {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

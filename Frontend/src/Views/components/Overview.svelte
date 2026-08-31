@@ -92,11 +92,31 @@
   }
 
   @media (max-width: 700px) {
+    .overview {
+      padding: 70px 6vw 50px;
+    }
+
     .award-item {
       padding: 10px 20px;
       border-right: none;
       border-bottom: 1px solid rgba(74,73,63,0.15);
       flex: 1 1 45%;
+    }
+
+    .award-item:last-child {
+      border-bottom: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .award-item {
+      flex: 1 1 100%;
+      text-align: left;
+      padding: 14px 0;
+    }
+
+    .award-row {
+      flex-direction: column;
     }
   }
 </style>

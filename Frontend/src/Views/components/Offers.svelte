@@ -161,4 +161,14 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 540px) {
+    .offer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .offer-card p {
+      min-height: unset;
+    }
+  }
 </style>

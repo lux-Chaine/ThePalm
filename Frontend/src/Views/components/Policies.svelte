@@ -126,10 +126,17 @@
 
   @media (max-width: 900px) {
     .policy-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
     section {
       padding: 80px 6vw;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .policy-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

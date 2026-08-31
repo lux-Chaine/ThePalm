@@ -167,4 +167,24 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 480px) {
+    .guest-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .rating-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .rating-strip div {
+      border-right: none;
+      padding-right: 0;
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+  }
 </style>

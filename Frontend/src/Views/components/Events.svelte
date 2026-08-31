@@ -199,12 +199,38 @@
   @media (max-width: 900px) {
     .events-grid {
       grid-template-columns: 1fr;
+      gap: 40px;
     }
     .capacity-grid {
       grid-template-columns: repeat(2,1fr);
     }
     section {
       padding: 80px 6vw;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .events-gallery {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .events-gallery img {
+      height: 140px;
+    }
+
+    .capacity-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .max-cap {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .venue-row {
+      grid-template-columns: 1.2fr 0.8fr 1fr;
+      font-size: 0.8rem;
     }
   }
 </style>

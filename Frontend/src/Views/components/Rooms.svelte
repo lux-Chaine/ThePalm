@@ -284,12 +284,31 @@
   @media (max-width: 900px) {
     .room-block, .room-block.reverse {
       grid-template-columns: 1fr;
+      gap: 36px;
     }
     .room-block.reverse .room-photos {
       order: 0;
     }
     section {
       padding: 80px 6vw;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .room-photos {
+      grid-template-columns: 1fr;
+    }
+
+    .room-photos img {
+      height: 240px;
+    }
+
+    .room-meta {
+      gap: 20px;
+    }
+
+    .room-block {
+      margin-bottom: 60px;
     }
   }
 </style>

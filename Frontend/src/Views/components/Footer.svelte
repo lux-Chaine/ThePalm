@@ -120,6 +120,28 @@
   @media (max-width: 900px) {
     .footer-grid {
       grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+  }
+
+  @media (max-width: 540px) {
+    footer {
+      padding: 50px 6vw 32px;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    footer p.tag {
+      max-width: 100%;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      gap: 6px;
+      text-align: center;
     }
   }
 </style>

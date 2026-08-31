@@ -101,12 +101,23 @@
   @media (max-width: 900px) {
     .kids-grid {
       grid-template-columns: 1fr;
+      gap: 36px;
     }
     .kids-gallery {
       grid-template-columns: 1fr 1fr;
     }
     section {
       padding: 80px 6vw;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .kids-gallery {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .kids-gallery img {
+      height: 120px;
     }
   }
 </style>

@@ -142,4 +142,14 @@
       padding: 80px 6vw;
     }
   }
+
+  @media (max-width: 480px) {
+    .amenity-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .amenity-card {
+      padding: 24px 20px;
+    }
+  }
 </style>
