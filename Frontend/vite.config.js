@@ -10,5 +10,8 @@ export default {
         changeOrigin: true,
       }
     }
+  },
+  optimizeDeps: {
+    exclude: ['svelte']
   }
 };

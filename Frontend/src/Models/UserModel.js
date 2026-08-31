@@ -1,36 +1,66 @@
-import { apiClient } from './api.js';
-
 export class UserModel {
-  static async getAll(params = {}) {
-    const queryParams = new URLSearchParams(params).toString();
-    const endpoint = `/users${queryParams ? `?${queryParams}` : ''}`;
-    return await apiClient.get(endpoint);
+  constructor(data = {}) {
+    this.id = data.id || null;
+    this.username = data.username || '';
+    this.email = data.email || '';
+    this.firstName = data.first_name || '';
+    this.lastName = data.last_name || '';
+    this.role = data.role || 'user'; // admin, manager, receptionist, user
+    this.isActive = data.is_active !== false;
+    this.permissions = data.permissions || [];
+    this.lastLogin = data.last_login || null;
+    this.createdAt = data.created_at || null;
+    this.updatedAt = data.updated_at || null;
   }
 
-  static async getById(id) {
-    return await apiClient.get(`/users/${id}`);
+  static fromAPI(data) {
+    return new UserModel({
+      id: data.id,
+      username: data.username,
+      email: data.email,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      role: data.role,
+      is_active: data.is_active,
+      permissions: data.permissions || [],
+      last_login: data.last_login,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    });
   }
 
-  static async create(userData) {
-    return await apiClient.post('/users', userData);
-  }
-
-  static async update(id, userData) {
-    return await apiClient.put(`/users/${id}`, userData);
-  }
-
-  static async delete(id) {
-    return await apiClient.delete(`/users/${id}`);
-  }
-
-  static formatUser(user) {
+  toAPI() {
     return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      first_name: this.firstName,
+      last_name: this.lastName,
+      role: this.role,
+      is_active: this.isActive,
+      permissions: this.permissions
     };
+  }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`.trim();
+  }
+
+  get initials() {
+    return `${this.firstName.charAt(0)}${this.lastName.charAt(0)}`.toUpperCase();
+  }
+
+  get roleLabel() {
+    const roleLabels = {
+      admin: 'Administrator',
+      manager: 'Manager',
+      receptionist: 'Receptionist',
+      user: 'User'
+    };
+    return roleLabels[this.role] || this.role;
+  }
+
+  hasPermission(permission) {
+    return this.permissions.includes(permission);
   }
 }

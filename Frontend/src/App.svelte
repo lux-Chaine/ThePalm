@@ -1,106 +1,67 @@
 <script>
-  import UserList from './Views/UserList.svelte';
-  import ProductList from './Views/ProductList.svelte';
-  import OrderForm from './Views/OrderForm.svelte';
-
-  let currentView = 'users';
-
-  function setView(view) {
-    currentView = view;
-  }
+  import Header from './Views/components/Header.svelte';
+  import Hero from './Views/components/Hero.svelte';
+  import Overview from './Views/components/Overview.svelte';
+  import Location from './Views/components/Location.svelte';
+  import Reception from './Views/components/Reception.svelte';
+  import Rooms from './Views/components/Rooms.svelte';
+  import Dining from './Views/components/Dining.svelte';
+  import Events from './Views/components/Events.svelte';
+  import Kids from './Views/components/Kids.svelte';
+  import Amenities from './Views/components/Amenities.svelte';
+  import Offers from './Views/components/Offers.svelte';
+  import Guests from './Views/components/Guests.svelte';
+  import Policies from './Views/components/Policies.svelte';
+  import CTA from './Views/components/CTA.svelte';
+  import Footer from './Views/components/Footer.svelte';
 </script>
 
-<div class="app">
-  <nav class="navbar">
-    <h1>Palm Application</h1>
-    <div class="nav-links">
-      <button 
-        class:active={currentView === 'users'} 
-        on:click={() => setView('users')}
-      >
-        Users
-      </button>
-      <button 
-        class:active={currentView === 'products'} 
-        on:click={() => setView('products')}
-      >
-        Products
-      </button>
-      <button 
-        class:active={currentView === 'orders'} 
-        on:click={() => setView('orders')}
-      >
-        Orders
-      </button>
-    </div>
-  </nav>
+<svelte:head>
+  <title>The Palm Hotel | Luxury in Kafr El Sheikh</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</svelte:head>
 
-  <main class="content">
-    {#if currentView === 'users'}
-      <UserList />
-    {:else if currentView === 'products'}
-      <ProductList />
-    {:else if currentView === 'orders'}
-      <OrderForm />
-    {/if}
-  </main>
+<div class="app">
+  <Header />
+  <Hero />
+  <Overview />
+  <Location />
+  <Reception />
+  <Rooms />
+  <Dining />
+  <Events />
+  <Kids />
+  <Amenities />
+  <Offers />
+  <Guests />
+  <Policies />
+  <CTA />
+  <Footer />
 </div>
 
 <style>
-  :global(body) {
+  :global(*) {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #f5f5f5;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  :global(body) {
+    background: #F8F4EA;
+    color: #201E19;
+    font-family: 'Work Sans', sans-serif;
+    overflow-x: hidden;
   }
 
   .app {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .navbar {
-    background: #fff;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .navbar h1 {
-    margin: 0;
-    color: #333;
-    font-size: 1.5rem;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .nav-links button {
-    padding: 0.5rem 1rem;
-    background: transparent;
-    color: #666;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .nav-links button:hover {
-    background: #f0f0f0;
-  }
-
-  .nav-links button.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-  }
-
-  .content {
-    flex: 1;
-    padding: 2rem;
   }
 </style>
