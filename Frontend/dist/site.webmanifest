@@ -1,0 +1,17 @@
+{
+  "name": "The Palm Hotel",
+  "short_name": "Palm Hotel",
+  "description": "Luxury hotel and hospitality experience in Kafr El Sheikh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F4EA",
+  "theme_color": "#16332A",
+  "icons": [
+    {
+      "src": "/images/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

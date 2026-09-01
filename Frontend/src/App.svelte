@@ -17,9 +17,23 @@
 </script>
 
 <svelte:head>
-  <title>The Palm Hotel | Luxury in Kafr El Sheikh</title>
+  <title>The Palm Hotel | Luxury Stay in Kafr El Sheikh</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Palm Hotel offers luxury rooms, dining, events, and premium hospitality experiences in Kafr El Sheikh." />
+  <meta name="keywords" content="The Palm Hotel, luxury hotel, Kafr El Sheikh hotel, hotel rooms, spa, dining, events, reservations" />
+  <meta name="author" content="The Palm Hotel" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="The Palm Hotel | Luxury Stay in Kafr El Sheikh" />
+  <meta property="og:description" content="Discover luxury rooms, elegant dining, and unforgettable experiences at The Palm Hotel." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://the-palm.vercel.app/" />
+  <meta property="og:image" content="https://the-palm.vercel.app/images/Logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Palm Hotel | Luxury Stay in Kafr El Sheikh" />
+  <meta name="twitter:description" content="Luxury rooms, dining, events, and premium hospitality in Kafr El Sheikh." />
+  <meta name="twitter:image" content="https://the-palm.vercel.app/images/Logo.png" />
+  <link rel="canonical" href="https://the-palm.vercel.app/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />

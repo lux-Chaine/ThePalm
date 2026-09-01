@@ -6,9 +6,9 @@
 <section class="reception">
   <div class="reception-grid">
     <div class="reception-photos" use:reveal>
-      <a href="#" aria-label="Reception and lobby"><img src="https://the-palm.vercel.app/images/palm45.jpeg" alt="Reception and lobby"></a>
-      <a href="#" aria-label="Lobby view"><img src="https://the-palm.vercel.app/images/palm44.jpg" alt="Lobby view"></a>
-      <a href="#" aria-label="Lobby seating"><img src="https://the-palm.vercel.app/images/palm46.jpeg" alt="Lobby seating"></a>
+      <a href="/" aria-label="Reception and lobby"><img src="https://the-palm.vercel.app/images/palm45.jpeg" alt="Reception and lobby" loading="lazy" decoding="async"></a>
+      <a href="/" aria-label="Lobby view"><img src="https://the-palm.vercel.app/images/palm44.jpg" alt="Lobby view" loading="lazy" decoding="async"></a>
+      <a href="/" aria-label="Lobby seating"><img src="https://the-palm.vercel.app/images/palm46.jpeg" alt="Lobby seating" loading="lazy" decoding="async"></a>
     </div>
     <div use:reveal={{ delay: 200 }}>
       <span class="eyebrow">{$t.reception.eyebrow}</span>
