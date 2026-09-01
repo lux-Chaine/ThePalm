@@ -17,7 +17,9 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "libphonenumber-js": "^1.13.12",
+    "resend": "^6.25.0",
     "svelte-routing": "^2.0.0"
   }
 }

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Request - The Palm Hotel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f4ea;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #fffdf9 0%, #f8f2e7 100%);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(22, 51, 42, 0.15);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #16332A 0%, #234A3B 100%);
+            padding: 30px;
+            text-align: center;
+        }
+        .logo {
+            color: #D8BD86;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .title {
+            color: #16332A;
+            font-size: 24px;
+            margin: 0 0 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .booking-details {
+            background: rgba(184, 147, 74, 0.08);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(184, 147, 74, 0.2);
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            color: #4A493F;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .value {
+            color: #16332A;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .section-title {
+            color: #B8934A;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .highlight {
+            background: linear-gradient(135deg, #d9bf87 0%, #b8934a 55%, #a77d34 100%);
+            color: #16332A;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .footer {
+            background: #16332A;
+            color: #F1EAD9;
+            text-align: center;
+            padding: 25px;
+            font-size: 13px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">THE PALM</h1>
+        </div>
+
+        <div class="content">
+            <h2 class="title">New Booking Request</h2>
+
+            <div class="booking-details">
+                <div class="detail-row">
+                    <span class="label">Guest Name:</span>
+                    <span class="value">{{name}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Phone:</span>
+                    <span class="value">{{phone}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{email}}</span>
+                </div>
+            </div>
+
+            <div class="section-title">Booking Details</div>
+
+            <div class="booking-details">
+                <div class="detail-row">
+                    <span class="label">Room Type:</span>
+                    <span class="value">{{roomType}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Guests:</span>
+                    <span class="value">{{guests}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Check-in:</span>
+                    <span class="value">{{checkIn}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Check-out:</span>
+                    <span class="value">{{checkOut}}</span>
+                </div>
+            </div>
+
+            {{#if notes}}
+            <div class="section-title">Special Requests</div>
+            <div class="booking-details">
+                <div class="detail-row">
+                    <span class="value">{{notes}}</span>
+                </div>
+            </div>
+            {{/if}}
+
+            <div class="highlight">
+                Please contact the guest to confirm the booking
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>The Palm Hotel</strong></p>
+            <p>Kafr El Sheikh, Egypt</p>
+            <p>Phone: +20 110 314 5834</p>
+        </div>
+    </div>
+</body>
+</html>

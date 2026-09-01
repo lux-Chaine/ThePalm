@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { t } from '../../i18n/index.js';
   import CountryCodeSelect from './CountryCodeSelect.svelte';
+  import emailjs from '@emailjs/browser';
 
   export let open = false;
   export let roomType = '';
@@ -9,8 +10,13 @@
 
   const dispatch = createEventDispatcher();
 
-  // Formspree endpoint - استبدل هذا برابط Formspree الخاص بك
-  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mgaeayzr';
+  // EmailJS Configuration - يتم قراءتها من متغيرات البيئة
+  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
+  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+
+  // Initialize EmailJS
+  emailjs.init(EMAILJS_PUBLIC_KEY);
 
   const emptyForm = () => ({
     name: '',
@@ -53,35 +59,38 @@
     error = '';
 
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: form.name,
-          phone: fullPhone,
-          email: form.email,
-          checkIn: form.checkIn,
-          checkOut: form.checkOut,
-          guests: form.guests,
-          roomType: form.roomType,
-          notes: form.notes,
-          _subject: `New Booking Request - ${form.name} - ${form.roomType}`,
-          _captcha: false
-        })
-      });
+      const templateParams = {
+        name: form.name,
+        phone: fullPhone,
+        email: form.email,
+        checkIn: form.checkIn,
+        checkOut: form.checkOut,
+        guests: form.guests,
+        roomType: form.roomType,
+        notes: form.notes,
+        subject: `New Booking Request - ${form.name} - ${form.roomType}`,
+        from_name: 'The Palm Hotel'
+      };
 
-      if (response.ok) {
+      console.log('Sending booking data via EmailJS:', templateParams);
+
+      const response = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log('EmailJS response:', response);
+
+      if (response.status === 200) {
         error = '';
         success = true;
       } else {
-        const data = await response.json();
-        error = data.error || $t.bookingModal.error;
+        error = $t.bookingModal.error;
       }
     } catch (err) {
-      error = $t.bookingModal.networkError;
+      console.error('Error sending email:', err);
+      error = $t.bookingModal.networkError + ': ' + (err.text || err.message);
     } finally {
       submitting = false;
     }
@@ -425,6 +434,28 @@
     margin: 0 0 20px;
   }
 
+  /* Custom scrollbar for modal */
+  .modal::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  .modal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal::-webkit-scrollbar-thumb {
+    background: rgba(184, 147, 74, 0.5);
+    border-radius: 1px;
+  }
+
+  .modal::-webkit-scrollbar-thumb:hover {
+    background: rgba(184, 147, 74, 0.8);
+  }
+
+  .modal {
+    scrollbar-width: none;
+  }
+
   @media (max-width: 640px) {
     .modal {
       padding: 28px 18px 18px;
@@ -451,27 +482,5 @@
       width: 100%;
       padding: 14px 24px;
     }
-  }
-
-  /* Custom scrollbar for modal */
-  .modal::-webkit-scrollbar {
-    width: 2px;
-  }
-
-  .modal::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .modal::-webkit-scrollbar-thumb {
-    background: rgba(184, 147, 74, 0.5);
-    border-radius: 1px;
-  }
-
-  .modal::-webkit-scrollbar-thumb:hover {
-    background: rgba(184, 147, 74, 0.8);
-  }
-
-  .modal {
-    scrollbar-width: none;
   }
 </style>
