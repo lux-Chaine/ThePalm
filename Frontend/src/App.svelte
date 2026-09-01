@@ -14,6 +14,28 @@
   import Policies from './Views/components/Policies.svelte';
   import CTA from './Views/components/CTA.svelte';
   import Footer from './Views/components/Footer.svelte';
+  import BookingModal from './Views/components/BookingModal.svelte';
+
+  let bookingOpen = false;
+  let bookingRoomType = '';
+  let bookingGuests = '';
+
+  function openBookingModal(event) {
+    if (event && event.detail) {
+      bookingRoomType = event.detail.roomType || '';
+      bookingGuests = event.detail.guests || '';
+    } else {
+      bookingRoomType = '';
+      bookingGuests = '';
+    }
+    bookingOpen = true;
+  }
+
+  function closeBookingModal() {
+    bookingOpen = false;
+    bookingRoomType = '';
+    bookingGuests = '';
+  }
 </script>
 
 <svelte:head>
@@ -41,11 +63,11 @@
 
 <div class="app">
   <Header />
-  <Hero />
+  <Hero on:open-booking={openBookingModal} />
   <Overview />
   <Location />
   <Reception />
-  <Rooms />
+  <Rooms on:open-booking={openBookingModal} />
   <Dining />
   <Events />
   <Kids />
@@ -53,8 +75,9 @@
   <Offers />
   <Guests />
   <Policies />
-  <CTA />
+  <CTA on:open-booking={openBookingModal} />
   <Footer />
+  <BookingModal open={bookingOpen} roomType={bookingRoomType} guests={bookingGuests} on:close={closeBookingModal} />
 </div>
 
 <style>
@@ -83,6 +106,35 @@
     color: #201E19;
     font-family: 'Work Sans', sans-serif;
     overflow-x: hidden;
+  }
+
+  /* Custom Scrollbar Styles */
+  :global(::-webkit-scrollbar) {
+    width: 10px;
+  }
+
+  :global(::-webkit-scrollbar-track) {
+    background: #F8F4EA;
+  }
+
+  :global(::-webkit-scrollbar-thumb) {
+    background: linear-gradient(180deg, #B8934A 0%, #A77D34 100%);
+    border-radius: 5px;
+    border: 2px solid #F8F4EA;
+  }
+
+  :global(::-webkit-scrollbar-thumb:hover) {
+    background: linear-gradient(180deg, #D8BD86 0%, #B8934A 100%);
+  }
+
+  :global(::-webkit-scrollbar-thumb:active) {
+    background: linear-gradient(180deg, #A77D34 0%, #8B6B2E 100%);
+  }
+
+  /* Firefox Scrollbar */
+  :global(*) {
+    scrollbar-width: thin;
+    scrollbar-color: #B8934A #F8F4EA;
   }
 
   .app {

@@ -85,6 +85,7 @@ export default {
   rooms: {
     eyebrow: 'Exquisite Accommodation',
     title: 'Rooms & suites, designed for comfort.',
+    booking: 'Book This Room',
     meta: {
       occupancy: 'Occupancy',
       view: 'View',
@@ -275,6 +276,38 @@ export default {
       whatsapp: 'WhatsApp',
     },
     button: 'Reserve Now',
+  },
+
+  bookingModal: {
+    eyebrow: 'Reservation Request',
+    title: 'Book your stay with us',
+    description: 'Fill in your details and our reservation team will contact you shortly.',
+    fields: {
+      name: 'Full name',
+      namePlaceholder: 'Enter your full name',
+      phone: 'Phone number',
+      phonePlaceholder: 'e.g. 1xx xxxx xxxx',
+      email: 'Email address',
+      emailPlaceholder: 'you@example.com',
+      guests: 'Number of guests',
+      checkIn: 'Check-in date',
+      checkOut: 'Check-out date',
+      roomType: 'Room type',
+      notes: 'Special requests',
+      notesPlaceholder: 'Any additional details or requests...',
+    },
+    roomOptions: {
+      standard: 'Standard Room',
+      superior: 'Superior Room',
+      junior: 'Junior Suite',
+      executive: 'Executive Suite',
+    },
+    submit: 'Confirm Booking',
+    cancel: 'Cancel',
+    close: 'Close',
+    required: 'Please fill in your name, phone and dates.',
+    successTitle: 'Booking request sent!',
+    successMessage: 'Your reservation request has been received. Our reservation team will contact you soon to confirm the booking.',
   },
 
   footer: {

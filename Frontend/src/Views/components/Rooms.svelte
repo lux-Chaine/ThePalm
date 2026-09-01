@@ -1,6 +1,18 @@
 <script>
   import { reveal } from '../../actions/reveal.js';
   import { t } from '../../i18n/index.js';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  let selectedRoomType = '';
+  let selectedGuests = '';
+
+  function openBookingWithRoom(roomName, occupancy) {
+    selectedRoomType = roomName;
+    selectedGuests = occupancy.replace(' Adults', '').replace(' بالغان', '').replace('Adults', '').replace('بالغين', '').trim();
+    dispatch('open-booking', { roomType: selectedRoomType, guests: selectedGuests });
+  }
 
   const images = [
     ['https://the-palm.vercel.app/images/palm7.jpeg','https://the-palm.vercel.app/images/palm8.jpeg'],
@@ -37,6 +49,7 @@
         <div class="amen-tags">
           {#each room.amenities as a}<span>{a}</span>{/each}
         </div>
+        <button class="room-booking-btn" on:click={() => openBookingWithRoom(room.name, room.occupancy)}>{$t.rooms.booking}</button>
       </div>
     </div>
   {/each}
@@ -74,6 +87,30 @@
   .room-meta div strong { font-family: 'Fraunces', serif; color: var(--sand); font-size: 0.98rem; font-weight: 400; }
   .amen-tags { display: flex; flex-wrap: wrap; gap: 10px; }
   .amen-tags span { font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--sand); border: 1px solid rgba(184,147,74,0.4); padding: 7px 14px; border-radius: 2px; }
+  .room-booking-btn {
+    appearance: none;
+    border: 1px solid rgba(216, 189, 134, 0.9);
+    background: linear-gradient(135deg, #d9bf87 0%, #b8934a 55%, #a77d34 100%);
+    color: var(--green-deep);
+    padding: 14px 28px;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(184, 147, 74, 0.28);
+    margin-top: 20px;
+  }
+  .room-booking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(184, 147, 74, 0.35);
+    filter: brightness(1.04);
+  }
+  :global([dir='rtl']) .room-booking-btn {
+    letter-spacing: 0;
+  }
   .policy-note { margin-top: 60px; padding-top: 36px; border-top: 1px solid rgba(184,147,74,0.25); color: rgba(241,234,217,0.55); font-size: 0.9rem; font-style: italic; }
 
   @media (max-width: 900px) {
@@ -86,5 +123,6 @@
     .room-photos img { height: 240px; }
     .room-meta { gap: 20px; }
     .room-block { margin-bottom: 60px; }
+    .room-booking-btn { width: 100%; padding: 12px 24px; }
   }
 </style>

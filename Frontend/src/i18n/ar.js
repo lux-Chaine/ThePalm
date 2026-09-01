@@ -85,6 +85,7 @@ export default {
   rooms: {
     eyebrow: 'إقامة استثنائية',
     title: 'غرف وأجنحة مصممة للراحة.',
+    booking: 'احجز هذه الغرفة',
     meta: {
       occupancy: 'الإشغال',
       view: 'الإطلالة',
@@ -275,6 +276,38 @@ export default {
       whatsapp: 'واتساب',
     },
     button: 'احجز الآن',
+  },
+
+  bookingModal: {
+    eyebrow: 'طلب حجز',
+    title: 'احجز إقامتك معنا',
+    description: 'املأ بياناتك وسيتواصل معك فريق الحجز قريباً.',
+    fields: {
+      name: 'الاسم الكامل',
+      namePlaceholder: 'اكتب اسمك الكامل',
+      phone: 'رقم الهاتف',
+      phonePlaceholder: 'مثال: 1xx xxxx xxxx',
+      email: 'البريد الإلكتروني',
+      emailPlaceholder: 'you@example.com',
+      guests: 'عدد الضيوف',
+      checkIn: 'تاريخ الوصول',
+      checkOut: 'تاريخ المغادرة',
+      roomType: 'نوع الغرفة',
+      notes: 'ملاحظات خاصة',
+      notesPlaceholder: 'أي تفاصيل أو طلبات إضافية...',
+    },
+    roomOptions: {
+      standard: 'غرفة قياسية',
+      superior: 'غرفة مميزة',
+      junior: 'جناح صغير',
+      executive: 'جناح تنفيذي',
+    },
+    submit: 'تأكيد الحجز',
+    cancel: 'إلغاء',
+    close: 'إغلاق',
+    required: 'يرجى إدخال الاسم ورقم الهاتف وتاريخ الوصول والمغادرة.',
+    successTitle: 'تم إرسال طلب الحجز!',
+    successMessage: 'تم استلام طلب الحجز الخاص بك. سيتواصل معك فريق الحجز قريباً لتأكيد الحجز.',
   },
 
   footer: {

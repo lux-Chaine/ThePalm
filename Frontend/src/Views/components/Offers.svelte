@@ -36,7 +36,7 @@
   .offer-tag { display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-deep); background: var(--gold-light); padding: 5px 12px; border-radius: 20px; font-weight: 600; margin-bottom: 18px; }
   .offer-card h3 { color: var(--sand); font-family: 'Fraunces', serif; font-size: 1.25rem; margin-bottom: 14px; }
   .offer-card p { color: rgba(241,234,217,0.65); font-size: 0.9rem; line-height: 1.65; margin-bottom: 22px; min-height: 96px; }
-  .offer-link { color: var(--gold-light); font-size: 0.82rem; letter-spacing: 0.03em; text-transform: uppercase; border-bottom: 1px solid rgba(184,147,74,0.4); padding-bottom: 3px; text-decoration: none; }
+  .offer-link { color: var(--gold-light); font-size: 0.82rem; letter-spacing: 0.03em; text-transform: uppercase; border-bottom: 1px solid rgba(184,147,74,0.4); padding-bottom: 3px; text-decoration: none; display: block; }
 
   @media (max-width: 900px) {
     .offer-grid { grid-template-columns: 1fr 1fr; }

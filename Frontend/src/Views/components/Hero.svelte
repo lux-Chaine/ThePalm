@@ -1,6 +1,8 @@
 <script>
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { t } from '../../i18n/index.js';
+
+  const dispatch = createEventDispatcher();
 
   onMount(() => {
     const revealEls = document.querySelectorAll('.reveal:not(.in)');
@@ -34,7 +36,7 @@
     <h1 class="reveal in">{$t.hero.title}</h1>
     <p class="reveal in">{$t.hero.subtitle}</p>
     <div class="btn-row reveal in">
-      <a href="#reserve" class="btn-primary">{$t.hero.cta.primary}</a>
+      <button class="btn-primary" on:click={() => dispatch('open-booking', { roomType: '', guests: '' })}>{$t.hero.cta.primary}</button>
       <a href="#location" class="btn-ghost">{$t.hero.cta.ghost}</a>
     </div>
     <div class="stat-strip reveal in">
@@ -123,18 +125,39 @@
   .btn-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
 
   .btn-primary {
-    background: var(--gold); color: var(--green-deep);
-    padding: 15px 30px; font-weight: 600; font-size: 0.82rem;
-    letter-spacing: 0.04em; text-transform: uppercase;
-    border-radius: 2px; transition: transform .25s ease, background .25s ease;
-    display: inline-block; text-decoration: none;
+    appearance: none;
+    border: 1px solid rgba(216, 189, 134, 0.9);
+    background: linear-gradient(135deg, #d9bf87 0%, #b8934a 55%, #a77d34 100%);
+    color: var(--green-deep);
+    padding: 16px 32px;
+    font-weight: 700;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 12px 28px rgba(184, 147, 74, 0.28);
+    cursor: pointer;
   }
-  .btn-primary:hover { transform: translateY(-2px); background: var(--gold-light); }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(184, 147, 74, 0.35);
+    filter: brightness(1.04);
+  }
+  :global([dir='rtl']) .btn-primary { letter-spacing: 0; }
 
   .btn-ghost {
-    color: var(--sand); font-size: 0.82rem; letter-spacing: 0.04em;
-    text-transform: uppercase; border-bottom: 1px solid rgba(241,234,217,0.4);
-    padding-bottom: 4px; text-decoration: none;
+    color: var(--sand);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(241,234,217,0.45);
+    padding-bottom: 5px;
+    text-decoration: none;
   }
 
   .stat-strip {
