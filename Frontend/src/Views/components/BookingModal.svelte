@@ -9,6 +9,9 @@
 
   const dispatch = createEventDispatcher();
 
+  // Formspree endpoint - استبدل هذا برابط Formspree الخاص بك
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mgaeayzr';
+
   const emptyForm = () => ({
     name: '',
     countryCode: '+20',
@@ -24,6 +27,7 @@
   let form = emptyForm();
   let success = false;
   let error = '';
+  let submitting = false;
 
   function closeModal() {
     dispatch('close');
@@ -38,18 +42,49 @@
     }
   }
 
-  function submitBooking() {
+  async function submitBooking() {
     const fullPhone = form.countryCode + ' ' + form.phone;
     if (!form.name.trim() || !form.phone.trim() || !form.checkIn || !form.checkOut) {
       error = $t.bookingModal.required;
       return;
     }
 
-    // Combine country code and phone number
-    form.phone = fullPhone;
-
+    submitting = true;
     error = '';
-    success = true;
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: form.name,
+          phone: fullPhone,
+          email: form.email,
+          checkIn: form.checkIn,
+          checkOut: form.checkOut,
+          guests: form.guests,
+          roomType: form.roomType,
+          notes: form.notes,
+          _subject: `New Booking Request - ${form.name} - ${form.roomType}`,
+          _captcha: false
+        })
+      });
+
+      if (response.ok) {
+        error = '';
+        success = true;
+      } else {
+        const data = await response.json();
+        error = data.error || $t.bookingModal.error;
+      }
+    } catch (err) {
+      error = $t.bookingModal.networkError;
+    } finally {
+      submitting = false;
+    }
   }
 
   $: if (open) {
@@ -138,8 +173,10 @@
           {/if}
 
           <div class="actions">
-            <button type="button" class="secondary-btn" on:click={closeModal}>{$t.bookingModal.cancel}</button>
-            <button type="submit" class="primary-btn">{$t.bookingModal.submit}</button>
+            <button type="button" class="secondary-btn" on:click={closeModal} disabled={submitting}>{$t.bookingModal.cancel}</button>
+            <button type="submit" class="primary-btn" disabled={submitting}>
+              {submitting ? $t.bookingModal.submitting : $t.bookingModal.submit}
+            </button>
           </div>
         </form>
       {:else}
